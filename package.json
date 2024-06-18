@@ -1,0 +1,11 @@
+{
+  "name": "temp",
+  "private": true,
+  "packageManager": "pnpm@8.15.6",
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "turbo": "^2.0.4"
+  }
+}
