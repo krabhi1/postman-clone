@@ -1,0 +1,16 @@
+{
+  "name": "@repo/utils",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {},
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "^20.11.24",
+    "nodemon": "^3.1.3",
+    "typescript": "^5.4.5"
+  },
+  "dependencies": {}
+}

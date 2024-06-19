@@ -1,6 +1,9 @@
 {
   "name": "temp",
   "private": true,
+  "scripts": {
+    
+  },
   "packageManager": "pnpm@8.15.6",
   "engines": {
     "node": ">=18"

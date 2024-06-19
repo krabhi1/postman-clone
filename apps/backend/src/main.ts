@@ -1,12 +1,9 @@
-import express from "express";
+import { env } from "./configs/env.config.js";
+import { openServer } from "./configs/express.config.js";
 
-const app = express();
-const port = 3000;
 
-app.get("/", (req, res) => {
-  res.send("Hello World!");
-});
+openServer();
 
-app.listen(port, () => {
-  console.log(`Server is running at http://localhost:${port}`);
-});
+if(env.NODE_ENV === "development"){
+    console.log("development mode");
+}
