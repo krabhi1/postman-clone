@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "temp:run": "node ./dist/run.js",
-    "dev": "nodemon --exec 'clear && node ./dist/main.js ' -e js",
+    "dev": "npm run watch & npx nodemon -e js --exec 'npm run start' ",
+    "start":"node ./dist/main.js",
     "watch": "tsc --watch",
     "build": "tsc --build",
     "prisma:studio": "npx prisma studio",

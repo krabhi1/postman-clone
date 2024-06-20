@@ -10,3 +10,6 @@ npx prisma generate
 ```
 
 ``
+
+ esbuild --bundle ./src/main.ts --outdir=dist --watch --platform=node --format=esm  --external:express
+ 
