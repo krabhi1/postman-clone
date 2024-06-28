@@ -14,7 +14,7 @@ async function run() {
   console.log(user1);
   const id = nanoid();
   console.log(id);
-  
+   
 }
 
 run();

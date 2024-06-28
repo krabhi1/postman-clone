@@ -4,8 +4,7 @@ import { openServer } from "./configs/express.config.js";
  
 openServer();    
 
+
 if(env.NODE_ENV === "development"){
     console.log("development mode"); 
 }
-
-console.log("Hello World")

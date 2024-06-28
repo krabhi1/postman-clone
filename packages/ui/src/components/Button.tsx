@@ -1,3 +1,3 @@
-export  function Button(props: { name: string }) {
-  return <button className="box">{props.name}</button>;
+export  function Button(props: { children?:React.ReactNode}) {
+  return <button className="">{props.children}</button>; 
 }

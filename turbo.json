@@ -1,7 +1,9 @@
 {
   "ui": "stream",
   "$schema": "https://turbo.build/schema.json",
-  "globalEnv": ["*"],
+  "globalEnv": [
+    "*"
+  ],
   "tasks": {
     "build": {
       "dependsOn": [
@@ -24,7 +26,10 @@
     },
     "dev": {
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      "dependsOn": [
+        "^build"
+      ]
     },
     "dev2": {
       "cache": false,

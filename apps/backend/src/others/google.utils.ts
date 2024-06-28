@@ -23,6 +23,8 @@ export async function getGoogleTokens(code: string) {
         path: "https://oauth2.googleapis.com/token",
         query: query
     })
+    console.log({ query ,url:env.GOOGLE_REDIRECT_URL,result })
+
     return result
 }
 //get new google access token

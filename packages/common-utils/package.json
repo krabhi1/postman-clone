@@ -1,5 +1,5 @@
 {
-  "name": "@repo/utils",
+  "name": "common-utils",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -7,7 +7,8 @@
     "watch": "tsc -w"
   },
   "exports": {
-    ".": "./dist/index.js"
+    ".": "./dist/index.js",
+    "./types": "./dist/types.js"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
