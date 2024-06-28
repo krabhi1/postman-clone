@@ -18,6 +18,9 @@ pnpm install
 #install turbo globally
 pnpm i -g turbo
 
+#save environment variables in .zshrc or .bashrc
+alias turbo1="turbo --no-daemon"
+
 #you can also use pnpm to run app
 pnpm dev | build  --filter=project-name
 # run frontend
