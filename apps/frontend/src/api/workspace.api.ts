@@ -1,7 +1,7 @@
-import { ServerWorkspace, WorkspaceGroup } from "../others/types";
-import { PartialWithMust } from "../others/utils";
+import { ServerWorkspace, WorkspaceGroup } from "common-utils/types";
 import { appStore } from "../store/app.store";
 import { authSafeApiCall } from "./apiUtils";
+import { PartialWithMust } from "common-utils";
 
 export async function createWorkspace(
   workspace: PartialWithMust<ServerWorkspace, "name" | "description">

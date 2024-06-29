@@ -1,4 +1,4 @@
-import { RoomPermission, ServerWorkspace } from "../others/types";
+import { RoomPermission, ServerWorkspace } from "common-utils/types";
 import { authSafeApiCall } from "./apiUtils";
 
 export async function addSharedUser(

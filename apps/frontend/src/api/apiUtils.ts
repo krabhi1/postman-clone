@@ -1,6 +1,7 @@
 import { RequestQuery, makeResult, Result, getAuthToken, saveAuthToken } from "common-utils";
 import { router } from "../others/pageRouter";
 import { userApi } from "./user.api";
+import { env } from "../configs/env.config";
 
 
 function objectToQueryString(obj: { [key: string]: any }): string {
@@ -73,7 +74,7 @@ export async function apiCall<T>(query: RequestQuery<T>) {
   }
 }
 export function serverUrl() {
-  return "http://localhost:3000";
+  return env.SERVER_URL
 }
 
 export async function serverApiCall<T>(query: RequestQuery<T>) {
