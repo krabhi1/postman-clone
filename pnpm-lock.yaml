@@ -148,6 +148,9 @@ importers:
       '@react-oauth/google':
         specifier: ^0.12.1
         version: 0.12.1(react-dom@18.3.1)(react@18.3.1)
+      common-store:
+        specifier: workspace:^
+        version: link:../../packages/common-store
       common-utils:
         specifier: workspace:^
         version: link:../../packages/common-utils
@@ -210,6 +213,43 @@ importers:
         specifier: ^5.2.0
         version: 5.3.1(@types/node@18.19.36)
 
+  packages/common-store:
+    dependencies:
+      '@liveblocks/client':
+        specifier: ^1.12.0
+        version: 1.12.0
+      '@liveblocks/react':
+        specifier: ^1.12.0
+        version: 1.12.0(react@18.3.1)
+      '@liveblocks/zustand':
+        specifier: ^1.12.0
+        version: 1.12.0(zustand@4.5.2)
+      common-utils:
+        specifier: workspace:^
+        version: link:../common-utils
+      immer:
+        specifier: ^10.1.1
+        version: 10.1.1
+      nanoid:
+        specifier: ^5.0.7
+        version: 5.0.7
+      use-immer:
+        specifier: ^0.10.0
+        version: 0.10.0(immer@10.1.1)(react@18.3.1)
+      zustand:
+        specifier: ^4.5.2
+        version: 4.5.2(@types/react@18.3.3)(immer@10.1.1)(react@18.3.1)
+    devDependencies:
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      '@types/node':
+        specifier: ^20.11.24
+        version: 20.14.5
+      typescript:
+        specifier: ^5.4.5
+        version: 5.4.5
+
   packages/common-utils:
     devDependencies:
       '@repo/typescript-config':
@@ -227,6 +267,12 @@ importers:
 
   packages/shared-ui:
     dependencies:
+      common-store:
+        specifier: workspace:^
+        version: link:../common-store
+      common-utils:
+        specifier: workspace:^
+        version: link:../common-utils
       nanoid:
         specifier: ^5.0.7
         version: 5.0.7
@@ -236,6 +282,9 @@ importers:
       react-dom:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
+      zustand:
+        specifier: ^4.5.2
+        version: 4.5.2(@types/react@18.3.3)(immer@10.1.1)(react@18.3.1)
     devDependencies:
       '@types/react':
         specifier: ^18.3.3

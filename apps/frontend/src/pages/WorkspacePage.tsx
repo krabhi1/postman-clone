@@ -2,10 +2,12 @@ import { sleep } from "common-utils";
 import { ServerWorkspace } from "common-utils/types";
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import WorkspaceView from "../components/WorkspaceView";
+// import WorkspaceView from "../components/WorkspaceView";
+
 import { useLiveStore } from "../configs/liveblocks.config";
 import { router } from "../others/pageRouter";
 import { appStore } from "../store/app.store";
+import {WorkspaceView} from 'shared-ui'
 
 function Load({
     workspace,

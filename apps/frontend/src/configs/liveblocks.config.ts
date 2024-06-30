@@ -1,15 +1,15 @@
-import { create } from "zustand";
 import { createClient } from "@liveblocks/client";
-import { liveblocks } from "@liveblocks/zustand";
-import { immer } from "zustand/middleware/immer";
-import type { WithLiveblocks } from "@liveblocks/zustand";
-import { apiCall, authSafeApiCall } from "../api/apiUtils";
-import { useShallow } from "zustand/react/shallow";
+import { authSafeApiCall } from "../api/apiUtils";
 
-import { nanoid } from "nanoid";
 import { userApi } from "../api/user.api";
 import { appStore } from "../store/app.store";
-import { Collection, CollectionItem, FolderItem, RequestItem, Workspace } from "common-utils/types";
+import {
+  Collection,
+  CollectionItem,
+  FolderItem,
+  Workspace,
+} from "common-utils/types";
+import { init, useLiveStore } from "common-store";
 
 const client = createClient({
   authEndpoint: async (room) => {
@@ -95,173 +95,9 @@ const findFolder = (collection: Collection, folderId: string) => {
   return _findFolder(collection.items);
 };
 
-export const useLiveStore = create<WithLiveblocks<State & Action, Presence>>()(
-  immer(
-    liveblocks(
-      (set) => ({
-        clearWorkspaceState() {
-          set((state) => {
-            state.workspaceState = undefined;
-          });
-        },
-        addNewCollection: (name) => {
-          set((state) => {
-            state.workspaceState?.collections.push({
-              id: nanoid(),
-              createdAt: Date.now(),
-              name: name,
-              description: "New Collection",
-              items: [],
-            });
-          });
-        },
-        addFolder(collectionId, name, parentFolderId) {
-          set((state) => {
-            const collection = state.workspaceState?.collections.find(
-              (collection) => collection.id === collectionId
-            );
-            const folderItem: FolderItem = {
-              id: nanoid(),
-              createdAt: Date.now(),
-              type: "folder",
-              name: name,
-              description: "New Folder",
-              items: [],
-            };
-            console.log("new folder is ", folderItem.id);
-            if (collection && !parentFolderId) {
-              collection.items.push(folderItem);
-            } else if (collection && parentFolderId) {
-              const folder = findFolder(collection, parentFolderId);
-              console.log("adding to",folder?.name,folder?.id,folderItem)
-              if (folder && folder.type === "folder") {
-                folder.items.push(folderItem);
-              }
-            }
-          });
-        },
-        addRequest(collectionId, name, parentFolderId) {
-          set((state) => {
-            const collection = state.workspaceState?.collections.find(
-              (collection) => collection.id === collectionId
-            );
-            const requestItem: RequestItem = {
-              id: nanoid(),
-              createdAt: Date.now(),
-              type: "request",
-              name: name,
-              description: "New Request",
-              url: "http://localhost:3000",
-              method: "GET",
-              body: {
-                type: "raw",
-                data: "",
-              },
-              headers: {},
-            };
-            if (collection && !parentFolderId) {
-              collection.items.push(requestItem);
-            } else if (collection && parentFolderId) {
-              const folder = findFolder(collection, parentFolderId);
-              if (folder) {
-                folder.items.push(requestItem);
-              }
-            }
-          });
-        },
-        clearCollections() {
-          set((state) => {
-            if (state.workspaceState) {
-              state.workspaceState.collections = [];
-            }
-          });
-        },
-        deleteItem(cid, itemId) {
-          set((state) => {
-            //delete collection if itemId is undefined
-            if (!itemId && state.workspaceState) {
-              state.workspaceState.collections =
-                state.workspaceState.collections.filter(
-                  (collection) => collection.id !== cid
-                );
-              return;
-            }
-            const collection = state.workspaceState?.collections.find(
-              (collection) => collection.id === cid
-            );
-            if (collection) {
-              //recursive function to delete item
-              const _deleteItem = (items: CollectionItem[]) => {
-                for (let i = 0; i < items.length; i++) {
-                  if (items[i].id === itemId) {
-                    items.splice(i, 1);
-                    return;
-                  }
-                  if (items[i].type === "folder") {
-                    _deleteItem((items[i] as FolderItem).items);
-                  }
-                }
-              };
-              _deleteItem(collection.items);
-            }
-          });
-        },
-        updateItem(collectionId, item, itemId) {
-          set((state) => {
-            if (!itemId && state.workspaceState) {
-              state.workspaceState.collections =
-                state.workspaceState.collections.map((collection) => {
-                  if (collection.id === collectionId) {
-                    return { ...collection, ...item };
-                  }
-                  return collection;
-                });
-              return;
-            }
-
-            if (state.workspaceState) {
-              const collection = state.workspaceState.collections.find(
-                (collection) => collection.id === collectionId
-              );
-              if (collection) {
-                const _updateItem = (items: CollectionItem[]) => {
-                  for (let i = 0; i < items.length; i++) {
-                    if (items[i].id === itemId) {
-                      items[i] = { ...items[i], ...item };
-                      return;
-                    }
-                    if (items[i].type === "folder") {
-                      _updateItem((items[i] as FolderItem).items);
-                    }
-                  }
-                };
-                _updateItem(collection.items);
-              }
-            }
-          });
-        },
-      }),
-      {
-        client,
-        presenceMapping: {},
-        storageMapping: { workspaceState: true },
-      }
-    )
-  )
-);
-
-// export function useLiveData(selector?: (state: State) => Action & State){
-//   const { workspaceState: ws, ...others } = useLiveStore();
-//   return {
-//     workspaceState: ws!!,
-//     ...others,
-//   };
-// }
-
+init(client);
 export function useWorkspaceState() {
   return useLiveStore((state) => state.workspaceState!);
 }
 
-// export function useShallowLiveState(selector: (state: State) => Action & State) {
-//   return useLiveStore(useShallow(selector));
-// }
+export { useLiveStore };
