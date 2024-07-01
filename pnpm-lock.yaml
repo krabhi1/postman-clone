@@ -78,6 +78,12 @@ importers:
       '@electron-toolkit/utils':
         specifier: ^3.0.0
         version: 3.0.0(electron@28.3.3)
+      common-utils:
+        specifier: workspace:^
+        version: link:../../packages/common-utils
+      shared-ui:
+        specifier: workspace:^
+        version: link:../../packages/shared-ui
     devDependencies:
       '@electron-toolkit/eslint-config-prettier':
         specifier: ^2.0.0

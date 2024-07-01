@@ -9,11 +9,18 @@ export default function GoogleRedirect() {
       //get code
       const url = new URL(window.location.href);
       const code = url.searchParams.get("code");
+      console.log("url",url,code)
       // alert(code);
       if (code) {
         const sResult = await userApi.signInWithGoogle(code);
         console.log({ sResult });
         if (sResult.data) {
+          //redirect to postman
+          const url="postman-clone://token="+sResult.data.token
+          const link=document.createElement("a")
+          link.href=url
+          document.body.appendChild(link)
+          link.click()
           //set token
           saveAuthToken(sResult.data.token);
           //redirect to home

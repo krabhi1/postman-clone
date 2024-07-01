@@ -7,6 +7,9 @@
     "src/preload/*.d.ts"
   ],
   "compilerOptions": {
+    "moduleResolution": "Bundler",
+    "module": "ESNext",
+    "noUnusedLocals": false,
     "composite": true,
     "jsx": "react-jsx",
     "baseUrl": ".",

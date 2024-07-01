@@ -8,9 +8,10 @@ import Home from "../pages/Home";
 import Login from "../pages/Login";
 import WorkspacePage from "../pages/WorkspacePage";
 import NoPage from "../pages/NoPage";
-import GoogleRedirect from "../components/GoogleRedirect";
+import GoogleRedirect from "../pages/GoogleRedirect";
 import About from "../pages/About";
 import { Router } from "@remix-run/router";
+import ElectronGoogleLogin from "../pages/ElectronGoogleLogin";
 function Layout() {
   return <Outlet />;
 }
@@ -42,6 +43,10 @@ export const routes = [
         element: <GoogleRedirect />,
       },
       {
+        path: "/login/electron",
+        element: <ElectronGoogleLogin />,
+      },
+      {
         path: "/about",
         element: <About />,
       },
@@ -55,6 +60,6 @@ export const routes = [
 ] as RouteObject[];
 export let router: Router;
 
-export function setRouter(r:Router){
+export function setRouter(r: Router) {
   router = r;
 }

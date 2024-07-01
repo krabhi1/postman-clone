@@ -72,3 +72,10 @@ app.on('window-all-closed', () => {
 
 // In this file you can include the rest of your app"s specific main process
 // code. You can also put them in separate files and require them here.
+
+app.setAsDefaultProtocolClient('postman-clone-abhi')
+app.on('open-url', (e, data) => {
+  console.log('auth response', { data })
+})
+
+
