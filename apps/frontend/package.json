@@ -21,8 +21,6 @@
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.23.1",
     "shared-ui": "workspace:^",
-    "ui": "workspace:^",
-    "ui2": "workspace:^",
     "use-immer": "^0.10.0",
     "zustand": "^4.5.2"
   },

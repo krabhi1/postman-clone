@@ -8,7 +8,7 @@ import { router } from "../others/pageRouter";
 import { localStore } from "../store/app.store";
 
 function Load({
-    workspace,
+    workspace, 
     isShared,
   }: {
     workspace: ServerWorkspace;

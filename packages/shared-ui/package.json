@@ -5,35 +5,42 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -p ./tsconfig-build.json && vite build",
+    "build2": "tsc && vite build",
+    "build": "rm -rf dist && npx tsup src/lib/main.tsx --format=esm --dts --minify",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
   "exports": {
-    ".": {
-      "import": "./dist/main.js",
-      "types": "./dist/lib/main.d.ts"
-    },
-    "./css": "./dist/style.css"
-  },
-  "peerDependencies": {
-    "nanoid": "^5.0.7",
-    "react": "^18.3.1"
+    ".": "./dist/main.js",
+    "./css": "./dist/main.css"
   },
   "dependencies": {
-    "react-dom": "^18.3.1"
+    "@liveblocks/client": "^1.12.0",
+    "@liveblocks/react": "^1.12.0",
+    "@liveblocks/zustand": "^1.12.0",
+    "@react-oauth/google": "^0.12.1",
+    "common-utils": "workspace:^",
+    "immer": "^10.1.1",
+    "nanoid": "^5.0.7",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.23.1",
+    "use-immer": "^0.10.0",
+    "zustand": "^4.5.2"
   },
   "devDependencies": {
-    "@types/react": "^18.3.3",
-    "@types/react-dom": "^18.3.0",
-    "@typescript-eslint/eslint-plugin": "^7.13.1",
-    "@typescript-eslint/parser": "^7.13.1",
-    "@vitejs/plugin-react": "^4.3.1",
+    "@remix-run/router": "1.16.1",
+    "@types/react": "^18.2.66",
+    "@types/react-dom": "^18.2.22",
+    "@typescript-eslint/eslint-plugin": "^7.2.0",
+    "@typescript-eslint/parser": "^7.2.0",
+    "@vitejs/plugin-react": "^4.2.1",
     "eslint": "^8.57.0",
-    "eslint-plugin-react-hooks": "^4.6.2",
-    "eslint-plugin-react-refresh": "^0.4.7",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.6",
+    "tsup": "^8.1.0",
     "typescript": "^5.2.2",
-    "vite": "^5.3.1",
+    "vite": "^5.2.0",
     "vite-plugin-dts": "^3.9.1"
   }
 }

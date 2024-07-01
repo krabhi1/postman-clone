@@ -12,6 +12,8 @@ import { useLiveStore } from "../configs/liveblocks.config";
 import { router, routes, setRouter } from "../others/pageRouter";
 import { useLocalState, localStore } from "../store/app.store";
 import Login from "../pages/Login";
+
+import "../index.css"
 //from components
 export function Init(options: {
   loginPage?: () => ReactNode;

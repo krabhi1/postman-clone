@@ -1,0 +1,91 @@
+* {
+  box-sizing: border-box;
+}
+body {
+  padding: 8px;
+}
+
+.profile {
+  font-size: 14px;
+  padding: 2px 0px;
+}
+
+.app .sign-out-but {
+  position: fixed;
+  top: 6px;
+  right: 6px;
+}
+
+/* --------utils-------- */
+.full{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+
+}
+.center{
+  display: grid;
+  align-items: center;
+  justify-content: center;
+}
+
+.list {
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.list-h {
+  padding: 6px;
+  display: flex;
+  flex-direction: row;
+  gap: 6px;
+}
+
+
+.box {
+  padding: 6px;
+  border: 1px solid #ccc;
+}
+.title-1 {
+  font-size: small;
+  display: block;
+}
+.title-2 {
+  font-size: medium;
+  display: block;
+  font-weight: normal;
+}
+.title-3 {
+  font-size: large;
+  display: block;
+  font-weight: bold;
+}
+
+.text-red{
+  color: red;
+}
+
+.text-green{
+  color: green;
+}
+
+.text-blue{
+  color: blue;
+}
+
+
+
+.collection{
+  border: 1px solid #333;
+}
+
+.folder{
+  border: 1px solid #ff0;
+}
+
+.request{
+  border: 1px solid #0f0;
+}
