@@ -43,7 +43,3 @@ export function Init(options: {
     useLiveStore,
   };
 }
-
-function Hello() {
-  return <></>;
-}
