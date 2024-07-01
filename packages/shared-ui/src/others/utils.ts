@@ -15,3 +15,7 @@ export function loadResourceForApp(){
   loadViteEnv();
   setRouter(createBrowserRouter(routes));
 }
+
+export type ReactChildren={
+  children?: React.ReactNode;
+}
