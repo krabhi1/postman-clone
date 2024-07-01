@@ -1,14 +1,17 @@
 {
-  "name": "frontend",
+  "name": "ui2",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build2": "tsc && vite build",
+    "build":"npx tsup src/lib/main.tsx --format=esm --dts",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
+  "main": "dist/main.js",
+  "types": "dist/main.d.ts",
   "dependencies": {
     "@liveblocks/client": "^1.12.0",
     "@liveblocks/react": "^1.12.0",
@@ -22,11 +25,11 @@
     "react-router-dom": "^6.23.1",
     "shared-ui": "workspace:^",
     "ui": "workspace:^",
-    "ui2": "workspace:^",
     "use-immer": "^0.10.0",
     "zustand": "^4.5.2"
   },
   "devDependencies": {
+    "@remix-run/router": "1.16.1",
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
     "@typescript-eslint/eslint-plugin": "^7.2.0",
@@ -35,7 +38,9 @@
     "eslint": "^8.57.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.6",
+    "tsup": "^8.1.0",
     "typescript": "^5.2.2",
-    "vite": "^5.2.0"
+    "vite": "^5.2.0",
+    "vite-plugin-dts": "^3.9.1"
   }
 }

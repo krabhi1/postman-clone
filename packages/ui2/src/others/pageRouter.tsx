@@ -1,14 +1,20 @@
-import { createBrowserRouter, Navigate, Outlet } from "react-router-dom";
+import {
+  createBrowserRouter,
+  Navigate,
+  Outlet,
+  RouteObject,
+} from "react-router-dom";
 import Home from "../pages/Home";
 import Login from "../pages/Login";
 import WorkspacePage from "../pages/WorkspacePage";
 import NoPage from "../pages/NoPage";
 import GoogleRedirect from "../components/GoogleRedirect";
 import About from "../pages/About";
+import { Router } from "@remix-run/router";
 function Layout() {
   return <Outlet />;
 }
-export const router:any = createBrowserRouter([
+export const routes = [
   {
     path: "/",
     element: <Layout />,
@@ -46,4 +52,9 @@ export const router:any = createBrowserRouter([
       { path: "*", element: <NoPage /> },
     ],
   },
-]);
+] as RouteObject[];
+export let router: Router;
+
+export function setRouter(r:Router){
+  router = r;
+}
