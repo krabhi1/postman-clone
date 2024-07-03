@@ -31,6 +31,11 @@ export function findFalsyKeys(
 
 //token
 export function saveAuthToken(token: string) {
+  //check if browser or nodejs
+  if (token === null || token === undefined) {
+    alert("setting auth-token " + token);
+    throw new Error("setting auth-token " + token);
+  }
   localStorage.setItem("auth-token", token);
 }
 export function getAuthToken() {
@@ -91,11 +96,10 @@ export function isValidEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
-
-export function hello(){
-  console.log('hello')
+export function hello() {
+  console.log("hello");
 }
 
-export function hello2(){
-  console.log('hello2')
+export function hello2() {
+  console.log("hello2");
 }

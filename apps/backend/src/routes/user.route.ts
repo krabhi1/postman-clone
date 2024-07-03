@@ -4,6 +4,7 @@ import { ResultCode, makeErrorResult, makeResult, makeResultFrom } from '../othe
 import { handleGetUser, handleGoogleSignInFromCode } from '../services/user.services.js';
 import { refreshUserSignInToken } from '../jwt/user.jwt.js';
 import { auth } from '../others/routes.utils.js';
+import { decodeJWT } from '../others/jwt.utils.js';
 
 const userRouter: Router = Router();
 
@@ -29,6 +30,7 @@ userRouter.post('/refresh/access_token', async (req, res) => {
         const result = makeResult({ code: ResultCode.HTTP_BAD_REQUEST, message: 'Missing token' });
         return res.status(result.code).json(result);
     }
+    console.log("s----s",decodeJWT(token))
     const tResult = refreshUserSignInToken(token);
     if (!tResult.data) {
         return res.status(400).json(tResult);

@@ -42,6 +42,16 @@
   border-radius: 50%;
 }
 
-.tab-list-context .tab-panel {
+.tab-list-parent .tab-panel {
   padding: 1rem 0;
+  width: 100%;
+  height: 100%;
+}
+
+.tab-list-empty{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

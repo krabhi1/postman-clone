@@ -6,6 +6,7 @@ import WorkspaceView from "../components/WorkspaceView";
 import { useLiveStore } from "../configs/liveblocks.config";
 import { router } from "../others/pageRouter";
 import { localStore } from "../store/app.store";
+import WorkspaceEditor from "../components/workspace/WorkspaceEditor";
 
 function Load({
     workspace, 
@@ -14,12 +15,15 @@ function Load({
     workspace: ServerWorkspace;
     isShared: boolean;
   }) {
+
     const {
       workspaceState,
       clearWorkspaceState,
       liveblocks: { enterRoom, leaveRoom, isStorageLoading, room, status },
     } = useLiveStore();
+
     const { roomId } = workspace;
+
     useEffect(() => {
       enterRoom(roomId);
   
@@ -28,6 +32,7 @@ function Load({
         clearWorkspaceState();
       };
     }, [enterRoom, leaveRoom]);
+
   
     useEffect(() => {
       const errorUnSub = room?.subscribe("error", async (e) => {
@@ -53,9 +58,10 @@ function Load({
       return <div>No workspace</div>;
     }
     return (
-      <div>
-        <WorkspaceView workspace={workspace} isShared={isShared} />
-      </div>
+      <>
+      {/* <WorkspaceView workspace={workspace} isShared={isShared} /> */}
+      <WorkspaceEditor/>
+      </>
     );
   }
   
@@ -79,6 +85,7 @@ function Load({
     useEffect(() => {
       localStore.getState().fetchWorkspaces();
     }, []);
+
   
     if (!workspaceGroup) {
       return <div>loading...</div>;
@@ -87,6 +94,7 @@ function Load({
     if (!workspace) {
       return <div>Workspace not found</div>;
     }
+
     return <Load workspace={workspace} isShared={isShared} />;
   }
   

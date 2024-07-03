@@ -5,7 +5,7 @@ import React, {
   ReactNode,
   useEffect,
 } from "react";
-import TabPanel, { TabPanelProps } from "./TabPanel";
+import TabItem, { TabPanelProps } from "./TabItem";
 import "../../styles/tab-list.css";
 import CloseIcon from "../../icons/CloseIcon";
 import { ReactChildren } from "../../others/utils";
@@ -13,32 +13,36 @@ import { ReactChildren } from "../../others/utils";
 type TabViewProps = ReactChildren & {
   activeIndex?: number;
   onTabChange?: (index: number) => void;
+  renderEmpty?: () => ReactNode;
 };
 
 export default function TabView({
   activeIndex = 0,
   onTabChange,
   children,
+  renderEmpty,
 }: TabViewProps) {
-  const [hiddenTab, setHiddenTab] = React.useState<ReactNode[]>([]);
+  useEffect(() => {
+    console.log("TabView mounted");
+  }, []);
+  const [hiddenTabs, setHiddenTabs] = React.useState<(string | number)[]>([]);
   const tabs = Children.toArray(children).filter(
     (e): e is ReactElement<TabPanelProps> => {
       const child = e as ReactElement<TabPanelProps>;
       const closable = child.props.closable || false;
 
-      for (const t of hiddenTab) {
-        const tab = t as ReactElement<TabPanelProps>;
-        if (tab.key === child.key) {
+      for (const key of hiddenTabs) {
+        if (key === child.key) {
           return false;
         }
       }
 
-      if (React.isValidElement(child) && child.type === TabPanel && !closable) {
+      if (React.isValidElement(child) && child.type === TabItem && !closable) {
         return true;
       }
       return false;
     }
-  );
+  ) as ReactElement<any>[];
 
   const [index, setIndex] = React.useState(activeIndex);
 
@@ -49,7 +53,7 @@ export default function TabView({
   }
 
   function handleCloseTab(index: number) {
-    setHiddenTab([...hiddenTab, tabs[index]]);
+    setHiddenTabs([...hiddenTabs, tabs[index].key!]);
     if (index === activeIndex) {
       // TODO edge cases
       const nextIndex = tabs.length === 1 ? -1 : index === 0 ? 1 : index - 1;
@@ -57,14 +61,25 @@ export default function TabView({
     }
     console.log("Tab closed", index);
   }
-  console.log(tabs)
+  console.log({ tabs, hiddenTab: hiddenTabs, count: Children.count(children) });
 
   useEffect(() => {
     handleTabChange(activeIndex);
   }, [activeIndex]);
 
+  const isEmpty = tabs.length === 0;
+  console.log(isEmpty);
+
+  if (isEmpty && renderEmpty) {
+    return <>{renderEmpty()}</>;
+  }
+
+  if (isEmpty) {
+    return <div className="tab-list-empty">Empty</div>;
+  }
+
   return (
-    <div className="tab-list-context">
+    <div className="tab-list-parent">
       <div className="tab-list">
         {tabs.map((tab, i) =>
           tab.props.headerTemplate ? (
@@ -97,7 +112,7 @@ export default function TabView({
           )
         )}
       </div>
-      <div>{tabs.length > 0 && tabs[index]}</div>
+      {tabs.length > 0 && tabs[index]}
     </div>
   );
 }
@@ -105,9 +120,15 @@ export default function TabView({
 export function TabViewExample() {
   return (
     <TabView>
-      <TabPanel closable={false} header="Tab 1">Content 1</TabPanel>
-      <TabPanel header="Tab 2">Content 2</TabPanel>
-      <TabPanel header="Tab 3">Content 3</TabPanel>
+      <TabItem closable={false} header="Tab 1">
+        Content 1
+      </TabItem>
+      <TabItem closable={false} header="Tab 2">
+        Content 2
+      </TabItem>
+      <TabItem closable={false} header="Tab 3">
+        Content 3
+      </TabItem>
     </TabView>
   );
 }

@@ -1,0 +1,30 @@
+.sidebar {
+  width: 100%;
+  height: 100%;
+  display: flex;
+}
+
+.sidebar > .header {
+  width: 40px;
+  height: 100%;
+  background-color: antiquewhite;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar > .content {
+  flex-grow: 1;
+  overflow: hidden;
+}
+
+.sidebar > .header .icon {
+  display: flex;
+  padding: 8px;
+  justify-content: center;
+  align-items: center;
+  width: fit-content;
+}
+
+.sidebar > .header .active {
+  background-color: rgba(112, 156, 221, 0.767);
+}

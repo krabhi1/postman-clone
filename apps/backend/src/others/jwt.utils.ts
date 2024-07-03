@@ -21,7 +21,7 @@ export function generateJWT(
 //verify JWT token
 export function verifyJWT<T>(token: string, secretKey: string) {
 
-    const result = makeResult<T>()
+    const result = makeErrorResult<T>()
     try {
         const decoded = jwt.verify(token, secretKey)
         result.data = decoded as T

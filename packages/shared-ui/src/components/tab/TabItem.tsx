@@ -10,7 +10,7 @@ export type TabPanelProps = ReactChildren & {
   headerTemplate?: (options: TabPanelHeaderTemplateOptions) => React.ReactNode;
   closable?: boolean;
 };
-export default function TabPanel(props: TabPanelProps) {
+export default function TabItem(props: TabPanelProps) {
   
 
   return <>{props.children}</>;
