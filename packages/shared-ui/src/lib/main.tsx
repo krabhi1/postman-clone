@@ -10,7 +10,7 @@ import { Router } from "@remix-run/router";
 import { env, updateEnv } from "../configs/env.config";
 import { useLiveStore } from "../configs/liveblocks.config";
 import { router, routes, setRouter } from "../others/pageRouter";
-import { useLocalState, localStore } from "../store/app.store";
+import { useLocalState, useLocalStore } from "../store/app.store";
 import Login from "../pages/Login";
 
 import "../index.css"
@@ -39,7 +39,7 @@ export function Init(options: {
     Component,
     router: _router,
     useLocalState,
-    localStore,
+    localStore: useLocalStore,
     useLiveStore,
   };
 }

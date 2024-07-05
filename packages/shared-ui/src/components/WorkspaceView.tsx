@@ -12,7 +12,7 @@ import { addSharedUser } from "../api/sharedUsers.api";
 import { useLiveStore } from "../configs/liveblocks.config";
 import {
   FolderLocal,
-  localStore,
+  useLocalStore,
   useLocalState,
 } from "../store/app.store";
 
@@ -52,7 +52,7 @@ const FolderItemView = React.memo(
           </button>
           <button
             onClick={() => {
-              localStore
+              useLocalStore
                 .getState()
                 .updateLocal(item.id, { isOpen: !localState.isOpen});
             }}
@@ -256,23 +256,23 @@ const CollectionListView = React.memo(
 );
 
 export default function WorkspaceView({
-  workspace,
+  _workspace,
   isShared,
 }: {
-  workspace: ServerWorkspace;
+  _workspace: ServerWorkspace;
   isShared: boolean;
 }) {
-  const { workspaceState, addNewCollection, clearCollections } = useLiveStore(
+  const { workspace, addNewCollection, clearCollections } = useLiveStore(
     (state) => ({
-      workspaceState: state.workspaceState,
+      workspace: state.workspaceState,
       addNewCollection: state.addNewCollection,
       clearCollections: state.clearCollections,
     })
   );
-  if (!workspaceState) return <div>No active Workspace</div>;
+  if (!workspace) return <div>No active Workspace</div>;
 
   async function inviteUser() {
-    if (!workspaceState) return;
+    if (!workspace) return;
     console.log("invite user");
     const email = prompt("Enter email to invite");
     if (!email || !isValidEmail(email)) {
@@ -289,7 +289,7 @@ export default function WorkspaceView({
 
   return (
     <div className="box list">
-      <div className="title-3">Workspace({workspaceState.name})</div>
+      <div className="title-3">Workspace({workspace.name})</div>
       <div className="box list">
         <div>shared Users : nitesh(offline,viewer),vicky(online,editor)</div>
       </div>
@@ -310,7 +310,7 @@ export default function WorkspaceView({
           Clear Collection
         </button>
       </div>
-      <CollectionListView collections={workspaceState.collections} />
+      <CollectionListView collections={workspace.collections} />
     </div>
   );
 }

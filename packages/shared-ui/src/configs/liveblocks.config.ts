@@ -8,19 +8,26 @@ import { useShallow } from "zustand/react/shallow";
 
 import { nanoid } from "nanoid";
 import { userApi } from "../api/user.api";
-import { localStore } from "../store/app.store";
-import { Collection, CollectionItem, FolderItem, RequestItem, Workspace } from "common-utils/types";
+import { useLocalStore } from "../store/app.store";
+import {
+  Collection,
+  CollectionItem,
+  Environment,
+  FolderItem,
+  RequestItem,
+  Workspace,
+} from "common-utils/types";
 
 const client = createClient({
   authEndpoint: async (room) => {
-    let profile = localStore.getState().profile;
+    let profile = useLocalStore.getState().profile;
     if (!profile) {
       const pResult = await userApi.getProfile();
       if (!pResult.data) {
         console.log(pResult);
         throw new Error("Profile not found," + pResult);
       }
-      localStore.getState().setProfile(pResult.data);
+      useLocalStore.getState().setProfile(pResult.data);
       profile = pResult.data;
     }
     if (!profile) {
@@ -71,6 +78,9 @@ type Action = {
     item: Partial<CollectionItem | Collection>,
     itemId?: string
   ) => void;
+  //env
+  addEnvironment: (name: string) => void;
+  getEnvById: (id: string) => Environment | undefined;
 };
 
 type Presence = {
@@ -98,7 +108,7 @@ const findFolder = (collection: Collection, folderId: string) => {
 export const useLiveStore = create<WithLiveblocks<State & Action, Presence>>()(
   immer(
     liveblocks(
-      (set) => ({
+      (set, get) => ({
         clearWorkspaceState() {
           set((state) => {
             state.workspaceState = undefined;
@@ -133,7 +143,7 @@ export const useLiveStore = create<WithLiveblocks<State & Action, Presence>>()(
               collection.items.push(folderItem);
             } else if (collection && parentFolderId) {
               const folder = findFolder(collection, parentFolderId);
-              console.log("adding to",folder?.name,folder?.id,folderItem)
+              console.log("adding to", folder?.name, folder?.id, folderItem);
               if (folder && folder.type === "folder") {
                 folder.items.push(folderItem);
               }
@@ -239,6 +249,24 @@ export const useLiveStore = create<WithLiveblocks<State & Action, Presence>>()(
               }
             }
           });
+        },
+        addEnvironment(name) {
+          set((state) => {
+            state.workspaceState?.environments.push({
+              id: nanoid(),
+              name: name,
+              variables: [],
+              createdAt: Date.now(),
+            });
+          });
+        },
+        getEnvById(id) {
+          if (id == get().workspaceState?.globalEnvironment.id) {
+            return get().workspaceState?.globalEnvironment;
+          }
+          return get().workspaceState?.environments.find(
+            (env) => env.id === id
+          );
         },
       }),
       {

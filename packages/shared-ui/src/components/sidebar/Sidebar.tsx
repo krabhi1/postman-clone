@@ -57,7 +57,7 @@ export default function Sidebar({
         {items.map((item, i) => {
           const active = i === index;
           return (
-            <div
+            <button
               key={i}
               className={`icon ${active ? "active" : ""}`}
               onClick={() => {
@@ -65,7 +65,7 @@ export default function Sidebar({
               }}
             >
               {item.props.icon}
-            </div>
+            </button>
           );
         })}
       </div>

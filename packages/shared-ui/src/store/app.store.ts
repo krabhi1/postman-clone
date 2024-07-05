@@ -15,11 +15,27 @@ export type CollectionLocal = {
   some: string;
 };
 export type Local = FolderLocal | CollectionLocal;
+export type EditorMainTab = {
+  id: string;
+  name: string;
+  type:
+    | "POST"
+    | "GET"
+    | "PUT"
+    | "DELETE"
+    | "ENV"
+    | "GLOBAL_ENV"
+    | "FOLDER"
+    | "COLLECTION";
+};
 export type LocalState = {
   // isAuth: boolean;
   profile?: User;
   workspaceGroup?: WorkspaceGroup;
   local: KeyValue<Local>;
+  //editor open tabs state
+  editorTabs: EditorMainTab[];
+  editorActiveTabId?: string;
 };
 
 export type LocalAction = {
@@ -30,11 +46,21 @@ export type LocalAction = {
   deleteWorkspace: (workspaceId: string) => void;
   fetchWorkspaces: () => Promise<void>;
   updateLocal: (key: string, value: Partial<Local>) => void;
+  //editor actions
+  addEditorTab: (tab: EditorMainTab) => void;
+  removeEditorTab: (tabId: string) => void;
+  setActiveEditorTab: (tabId: string) => void;
+  addEditorTabAndSetAsActive: (tab: EditorMainTab) => void;
 };
-
-export const localStore:UseBoundStore<WithImmer<StoreApi<LocalState & LocalAction>>> = create<LocalState & LocalAction>()(
+function isEditorTabExists(tabId: string) {
+  return useLocalStore.getState().editorTabs.some((t) => t.id === tabId);
+}
+export const useLocalStore: UseBoundStore<
+  WithImmer<StoreApi<LocalState & LocalAction>>
+> = create<LocalState & LocalAction>()(
   immer((set) => ({
     workspaceGroup: undefined,
+    editorTabs: [],
     local: {},
     setProfile: (profile?: User) => {
       set((state) => {
@@ -61,7 +87,7 @@ export const localStore:UseBoundStore<WithImmer<StoreApi<LocalState & LocalActio
       });
     },
     fetchWorkspaces: async () => {
-      if (localStore.getState().workspaceGroup) return;
+      if (useLocalStore.getState().workspaceGroup) return;
       safeFetch(async () => {
         const workspaceGroupResult = await getWorkspaces();
         set((state) => {
@@ -76,31 +102,62 @@ export const localStore:UseBoundStore<WithImmer<StoreApi<LocalState & LocalActio
         state.local[key] = { ...state.local[key], ...value };
       });
     },
+    addEditorTab: (tab: EditorMainTab) => {
+      set((state) => {
+        if (isEditorTabExists(tab.id)) {
+          return;
+        }
+        state.editorTabs.push(tab);
+      });
+    },
+    removeEditorTab: (tabId: string) => {
+      set((state) => {
+        state.editorTabs = state.editorTabs.filter((t) => t.id !== tabId);
+      });
+    },
+    setActiveEditorTab: (tabId: string) => {
+      set((state) => {
+        if (isEditorTabExists(tabId)) {
+          state.editorActiveTabId = tabId;
+          return;
+        }
+      });
+    },
+    addEditorTabAndSetAsActive: (tab: EditorMainTab) => {
+      set((state) => {
+        if (isEditorTabExists(tab.id)) {
+          state.editorActiveTabId = tab.id;
+          return;
+        }
+        state.editorTabs.push(tab);
+        state.editorActiveTabId = tab.id;
+      });
+    },
   }))
 );
 export type LocalType = "folder" | "collection";
 
 export function useLocalState<T extends Local>(key: string, type: LocalType) {
   //if no state then create one
-  if (!localStore.getState().local[key]) {
+  if (!useLocalStore.getState().local[key]) {
     if (type === "folder") {
-      localStore
+      useLocalStore
         .getState()
         .updateLocal(key, { isOpen: true } as FolderLocal);
     } else if (type === "collection") {
-      localStore
+      useLocalStore
         .getState()
         .updateLocal(key, { isOpen: true } as CollectionLocal);
     }
   }
-  return localStore(useShallow((state) => state.local[key])) as T;
+  return useLocalStore(useShallow((state) => state.local[key])) as T;
 }
 
 async function safeFetch(callback: () => void) {
-  if (!localStore.getState().profile) {
+  if (!useLocalStore.getState().profile) {
     const profileResult = await userApi.getProfile();
     if (profileResult.data) {
-      localStore.getState().setProfile(profileResult.data);
+      useLocalStore.getState().setProfile(profileResult.data);
       callback();
     }
   } else {

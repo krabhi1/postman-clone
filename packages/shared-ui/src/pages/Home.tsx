@@ -5,7 +5,7 @@ import { userApi } from "../api/user.api";
 import { getWorkspaces, createWorkspace, deleteWorkspace } from "../api/workspace.api";
 import ProfileView from "../components/ProfileView";
 import { router } from "../others/pageRouter";
-import { localStore } from "../store/app.store";
+import { useLocalStore } from "../store/app.store";
 
 const WorkspaceItemView = memo(
     ({
@@ -48,19 +48,19 @@ const WorkspaceItemView = memo(
 
 export default function Home() {
     // const [workspaces, setWorkspaces] = useImmer<Workspace[]>([]);
-    const profile = localStore((state) => state.profile);
-    const workspaceGroup = localStore((state) => state.workspaceGroup);
+    const profile = useLocalStore((state) => state.profile);
+    const workspaceGroup = useLocalStore((state) => state.workspaceGroup);
     async function init() {
       const userResult = await userApi.getProfile();
       if (userResult.data) {
-        localStore.getState().setProfile(userResult.data);
+        useLocalStore.getState().setProfile(userResult.data);
       }
       console.log(userResult);
   
       //fetch workspaces
       const workspacesResult = await getWorkspaces();
       if (workspacesResult.data) {
-        localStore.getState().setWorkspaces(workspacesResult.data);
+        useLocalStore.getState().setWorkspaces(workspacesResult.data);
       }
       console.log(workspacesResult);
     }
@@ -69,7 +69,7 @@ export default function Home() {
     }, []);
   
     async function logOut() {
-      localStore.getState().setProfile(undefined);
+      useLocalStore.getState().setProfile(undefined);
       clearAuthToken();
       await sleep(1000);
       router.navigate("/login", { replace: true });
@@ -80,7 +80,7 @@ export default function Home() {
         description: "New Workspace Description",
       });
       if (result.data) {
-        localStore.getState().addWorkspace(result.data);
+        useLocalStore.getState().addWorkspace(result.data);
       }
     }
     const handleOpen = useCallback(
@@ -92,7 +92,7 @@ export default function Home() {
   
     //delete workspace
     const handleDeleteWorkspace = useCallback(async (id: string) => {
-      localStore.getState().deleteWorkspace(id);
+      useLocalStore.getState().deleteWorkspace(id);
       const result = await deleteWorkspace(id);
       console.log(result);
     }, []);

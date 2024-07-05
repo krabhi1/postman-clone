@@ -13,6 +13,7 @@ import { ReactChildren } from "../../others/utils";
 type TabViewProps = ReactChildren & {
   activeIndex?: number;
   onTabChange?: (index: number) => void;
+  onTabClose?: (index: number) => void;
   renderEmpty?: () => ReactNode;
 };
 
@@ -21,21 +22,22 @@ export default function TabView({
   onTabChange,
   children,
   renderEmpty,
+  onTabClose,
 }: TabViewProps) {
   useEffect(() => {
     console.log("TabView mounted");
   }, []);
-  const [hiddenTabs, setHiddenTabs] = React.useState<(string | number)[]>([]);
+  // const [hiddenTabs, setHiddenTabs] = React.useState<(string | number)[]>([]);
   const tabs = Children.toArray(children).filter(
     (e): e is ReactElement<TabPanelProps> => {
       const child = e as ReactElement<TabPanelProps>;
       const closable = child.props.closable || false;
 
-      for (const key of hiddenTabs) {
-        if (key === child.key) {
-          return false;
-        }
-      }
+      // for (const key of hiddenTabs) {
+      //   if (key === child.key) {
+      //     return false;
+      //   }
+      // }
 
       if (React.isValidElement(child) && child.type === TabItem && !closable) {
         return true;
@@ -53,15 +55,17 @@ export default function TabView({
   }
 
   function handleCloseTab(index: number) {
-    setHiddenTabs([...hiddenTabs, tabs[index].key!]);
+    // setHiddenTabs([...hiddenTabs, tabs[index].key!]);
+    if(!onTabClose) return;
     if (index === activeIndex) {
       // TODO edge cases
       const nextIndex = tabs.length === 1 ? -1 : index === 0 ? 1 : index - 1;
       handleTabChange(nextIndex);
     }
+    onTabClose?.(index);
     console.log("Tab closed", index);
   }
-  console.log({ tabs, hiddenTab: hiddenTabs, count: Children.count(children) });
+  // console.log({ tabs, hiddenTab: hiddenTabs, count: Children.count(children) });
 
   useEffect(() => {
     handleTabChange(activeIndex);
@@ -81,36 +85,38 @@ export default function TabView({
   return (
     <div className="tab-list-parent">
       <div className="tab-list">
-        {tabs.map((tab, i) =>
-          tab.props.headerTemplate ? (
-            <Fragment key={i}>
-              {tab.props.headerTemplate?.({
-                onClick: () => handleTabChange(i),
-                isActive: index === i,
-                index: i,
-              })}
-            </Fragment>
-          ) : (
-            <div
-              className={`changes ${index === i ? "active" : ""}`}
-              key={i}
-              onClick={() => handleTabChange(i)}
-            >
-              <span>{tab.props.header || `Item ${i + 1}`}</span>
-              {tab.props.closable != undefined && (
-                <span
-                  className="close-icon"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleCloseTab(i);
-                  }}
-                >
-                  <CloseIcon />
-                </span>
-              )}
-            </div>
-          )
-        )}
+        <div className="tab-header">
+          {tabs.map((tab, i) =>
+            tab.props.headerTemplate ? (
+              <Fragment key={i}>
+                {tab.props.headerTemplate?.({
+                  onClick: () => handleTabChange(i),
+                  isActive: index === i,
+                  index: i,
+                })}
+              </Fragment>
+            ) : (
+              <div
+                className={`changes ${index === i ? "active" : ""}`}
+                key={i}
+                onClick={() => handleTabChange(i)}
+              >
+                <span>{tab.props.header || `Item ${i + 1}`}</span>
+                {tab.props.closable != undefined && (
+                  <span
+                    className="close-icon"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleCloseTab(i);
+                    }}
+                  >
+                    <CloseIcon />
+                  </span>
+                )}
+              </div>
+            )
+          )}
+        </div>
       </div>
       {tabs.length > 0 && tabs[index]}
     </div>

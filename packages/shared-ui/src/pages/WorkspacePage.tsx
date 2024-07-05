@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom";
 import WorkspaceView from "../components/WorkspaceView";
 import { useLiveStore } from "../configs/liveblocks.config";
 import { router } from "../others/pageRouter";
-import { localStore } from "../store/app.store";
+import { useLocalStore } from "../store/app.store";
 import WorkspaceEditor from "../components/workspace/WorkspaceEditor";
 
 function Load({
@@ -68,8 +68,8 @@ function Load({
   export default function WorkspacePage() {
     const { id } = useParams();
   
-    const workspaceGroup = localStore((state) => state.workspaceGroup);
-    const profile = localStore((state) => state.profile);
+    const workspaceGroup = useLocalStore((state) => state.workspaceGroup);
+    const profile = useLocalStore((state) => state.profile);
     const workspace = [
       ...(workspaceGroup?.self || []),
       ...(workspaceGroup?.shared || []),
@@ -83,7 +83,7 @@ function Load({
     console.log("isShared", isShared);
   
     useEffect(() => {
-      localStore.getState().fetchWorkspaces();
+      useLocalStore.getState().fetchWorkspaces();
     }, []);
 
   

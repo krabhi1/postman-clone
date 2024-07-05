@@ -1,25 +1,39 @@
-import { liveblocks } from "../configs/liveblocks.config.js"
-import { isHttpOk } from "../others/apicall.utils.js"
-import { makeResult } from "../others/utils.js"
+import { liveblocks } from "../configs/liveblocks.config.js";
+import { isHttpOk } from "../others/apicall.utils.js";
+import { makeErrorResult, makeResult } from "../others/utils.js";
 
-export async function identifyUser({ userId, groupIds, userInfo }: {
-    userId: string,
-    groupIds: string[],
-    userInfo: {
-        name: string,
-        avatar?: string,
-        more?: any
-    }
+export async function identifyUser({
+  userId,
+  groupIds,
+  userInfo,
+}: {
+  userId: string;
+  groupIds: string[];
+  userInfo: {
+    name: string;
+    avatar?: string;
+    more?: any;
+  };
 }) {
-    const result = makeResult<{ token: string }>()
-    const { body, status } = await liveblocks.identifyUser({ userId, groupIds }, { userInfo })
-    if (isHttpOk(status)) {
-        result.data = JSON.parse(body)
+  const result = makeErrorResult<{ token: string }>();
+  try {
+    const { body, status } = await liveblocks.identifyUser(
+      { userId, groupIds },
+      { userInfo }
+    );
+
+    if (!isHttpOk(status)) {
+      result.message = "Error identifying user";
+      result.error = body;
+      result.code = status;
+      console.log("identifyUser error", body, status);
     } else {
-        const error = JSON.parse(body)
-        result.error = error
-        result.message = error.message
+      result.data = JSON.parse(body);
+      result.code = status;
     }
-    result.code = status
-    return result
+  } catch (error: any) {
+    result.error = error;
+    result.message = "Error identifying user";
+  }
+  return result;
 }

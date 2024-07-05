@@ -1,6 +1,6 @@
 import { PartialWithMust } from "common-utils";
 import { ServerWorkspace, WorkspaceGroup } from "common-utils/types";
-import { localStore } from "../store/app.store";
+import { useLocalStore } from "../store/app.store";
 import { authSafeApiCall } from "./apiUtils";
 
 export async function createWorkspace(
@@ -16,7 +16,7 @@ export async function createWorkspace(
 
 // get workspaces of user
 export async function getWorkspaces() {
-  const profile = localStore.getState().profile;
+  const profile = useLocalStore.getState().profile;
   const result = await authSafeApiCall<WorkspaceGroup>({
     path: "/api/v1/workspace",
     query: {

@@ -1,12 +1,12 @@
-import Header from "./Header";
-import Main from "./Main";
+import WorkspaceHeader from "./WorkspaceHeader";
+import WorkspaceMain from "./WorkspaceMain";
 import "../../styles/editor.css"
 
 export default function WorkspaceEditor() {
     return (
         <div className="w-editor">
-          <Header/>
-          <Main/>
+          <WorkspaceHeader/>
+          <WorkspaceMain/>
         </div>
     );
 }

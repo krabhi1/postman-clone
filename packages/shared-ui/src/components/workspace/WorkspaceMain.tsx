@@ -4,49 +4,34 @@ import Splitter from "../Splitter";
 import Sidebar from "../sidebar/Sidebar";
 import SidebarItem from "../sidebar/SidebarItem";
 import Split from "react-split";
-import TabView, { TabViewExample } from "../tab/TabView";
-import TabItem from "../tab/TabItem";
-function PanelA() {
-  return (
-    <div style={{ overflow: "hidden" }}>Render based on left sidebar index</div>
-  );
-}
+import { TabViewExample } from "../tab/TabView";
+import { useLiveStore } from "../../configs/liveblocks.config";
+import { useShallow } from "zustand/react/shallow";
+import StarIcon from "../../icons/StarIcon";
+import { PanelLeft } from "./panels/PanelLeft";
+import { PanelRight } from "./panels/PanelRight";
 
-function PanelB() {
-  return (
-    <TabView>
-      <TabItem closable={false} header="Tab 1">
-        Content 1
-      </TabItem>
-      <TabItem closable={false} header="Tab 2">
-        Content 2
-      </TabItem>
-      <TabItem closable={false} header="Tab 3">
-        Content 3
-      </TabItem>
-    </TabView>
-  );
-}
-function Content2({ index }: { index: number | undefined }) {
+function Content({ index }: { index: number | undefined }) {
   useEffect(() => {
     console.log("Content2 mounted");
   }, []);
 
-  if (index === undefined) return <PanelB />;
+  if (index === undefined) return <PanelRight />;
 
   return (
     <Split
       className="split"
       gutterSize={1}
-      snapOffset={[200, 0]}
+      snapOffset={[150, 0]}
       minSize={[0, 200]}
     >
-      <PanelA />
-      <PanelB />
+      <PanelLeft index={index} />
+      <PanelRight />
     </Split>
   );
 }
-export default function Main() {
+
+export default function WorkspaceMain() {
   const [leftSidebarIndex, setLeftSidebarIndex] = useState<
     number | undefined
   >();
@@ -64,12 +49,12 @@ export default function Main() {
         onItemChange={(i) => setLeftSidebarIndex(i)}
       >
         <SidebarItem icon={<CollectionIcon />} />
-        <SidebarItem icon={<CollectionIcon />} />
+        <SidebarItem icon={<StarIcon />} />
       </Sidebar>
       {/* left sidebar panel */}
       {/* editor => tab  */}
 
-      <Content2 index={leftSidebarIndex} />
+      <Content index={leftSidebarIndex} />
     </div>
   );
 }

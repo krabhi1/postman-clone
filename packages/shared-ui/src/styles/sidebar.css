@@ -5,11 +5,13 @@
 }
 
 .sidebar > .header {
-  width: 40px;
-  height: 100%;
-  background-color: antiquewhite;
+  padding: 0.5rem 0;
+  width: 48px;
+  border-right: 1px solid var(--color-border);
   display: flex;
   flex-direction: column;
+  align-items: center;
+  padding-top: 40px;
 }
 
 .sidebar > .content {
@@ -18,13 +20,43 @@
 }
 
 .sidebar > .header .icon {
-  display: flex;
-  padding: 8px;
-  justify-content: center;
-  align-items: center;
-  width: fit-content;
+  width: 48px !important;
+  height: 48px !important;
+  background-color: transparent;
+  border-radius: 0 !important;
+  position: relative;
+  border: 1px solid transparent;
+  border-left: none;
+  border-radius: none;
 }
 
-.sidebar > .header .active {
-  background-color: rgba(112, 156, 221, 0.767);
+/* .sidebar > .header .active {
+  background-color: rgba(196, 237, 250, 0.767);
+} */
+
+.sidebar > .header .icon.active,
+.sidebar > .header .icon:hover {
+  background-color: var(--color-surface-variant);
+  fill: var(--color-primary);
+}
+
+
+.sidebar > .header button.active {
+  border-color: var(--color-border);
+}
+
+.sidebar > .header button.active::after {
+  content: "";
+  width: 4px;
+  height: 100%;
+  background-color: var(--color-surface-variant);
+  position: absolute;
+  top: 0;
+  right: -3px;
+}
+
+.sidebar > .header button svg {
+  fill: inherit;
+  width: 24px;
+  height: auto;
 }
