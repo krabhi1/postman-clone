@@ -35,14 +35,11 @@ export const _Menu = forwardRef<MenuHandle, MenuProps>(
     useEffect(() => {
       const handleClick = (e: MouseEvent) => {
         if (isOpen) {
-          console.log("click outside", e.target, menuMainRef.current);
           //check click is outside of menu
           const targetElement = e.target as HTMLElement;
           if (!targetElement.matches(".menu")) {
             setIsOpen(false);
-            console.log("t", targetElement.classList);
           }
-          console.log("---");
         }
       };
       document.addEventListener("click", handleClick);
@@ -65,7 +62,6 @@ export const _Menu = forwardRef<MenuHandle, MenuProps>(
     }, []);
     function handleClick(item: MenuItem) {
       onItemSelect?.(item);
-      console.log("item clicked", item);
     }
 
 

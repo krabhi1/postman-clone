@@ -1,6 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 import { updateEnv } from "../configs/env.config";
 import { setRouter, routes } from "./pageRouter";
+import { memo } from "react";
 
 export function loadViteEnv() {
   let _env = {
@@ -20,4 +21,5 @@ export type ReactChildren={
   children?: React.ReactNode;
 }
 
+export const genericMemo: <T>(component: T) => T = memo;
 

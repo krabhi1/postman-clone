@@ -9,7 +9,7 @@ import { Menu } from "../../Menu";
 
 export default function CollectionsSidebarItem() {
   const [activeNodeId, setActiveNodeId] = useState<string>();
-  
+
   const { collections = [], addCollection } = useLiveStore(
     useShallow((state) => ({
       collections: state.workspaceState?.collections,
@@ -74,7 +74,18 @@ export default function CollectionsSidebarItem() {
           updateLocal(node.id, { isOpen: !node.isOpen });
         }}
         optionMenuListCallback={(node) => {
-          return ["delete", "rename",node.name,node.id];
+          let type = node.data.type;
+          const common = ["open", "delete", "duplicate", "rename"];
+          if (type === "collection") {
+            return ["new folder", "new request", ...common];
+          }
+          if (type === "folder") {
+            return ["new folder", "new request", ...common];
+          }
+          if (type === "request") {
+            return ["duplicate", "send", ...common];
+          }
+          return [];
         }}
       />
     </div>
