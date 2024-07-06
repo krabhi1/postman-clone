@@ -9,6 +9,8 @@ import FolderIcon from "../icons/FolderIcon";
 import ArrowRightIcon from "../icons/ArrowRightIcon";
 import MoreHoriIcon from "../icons/MoreHoriIcon";
 import "../styles/tree.css";
+import { Menu, MenuHandle } from "./Menu";
+import { useRef, useState } from "react";
 
 export type Node<T = any> = {
   id: string;
@@ -34,14 +36,42 @@ export type NodeProps<T> = CommonProps<T> & {
   nodes: Node<T>[];
 };
 
+const items = ["delete", "duplicate", "rename"];
+
 export default function Tree<T>(props: NodeProps<T>) {
+  const targetRef = useRef<HTMLDivElement>(null);
+  const menuRef = useRef<MenuHandle>(null);
+  const [menuItems, setMenuItems] = useState<string[]>([]);
+  const [prevClickMoreNodeId, setPrevClickMoreNodeId] = useState<string>();
+  console.log({ targetRef });
   return (
     <div className="tree">
       <div>
         {props.nodes.map((node) => (
-          <RenderTreeNode key={node.id} node={node} {...props} times={0} />
+          <RenderTreeNode
+            onMoreClick={(node) => {
+              setMenuItems(props.optionMenuListCallback?.(node) || []);
+              console.log("more click", node.id, prevClickMoreNodeId);
+              if (prevClickMoreNodeId && node.id === prevClickMoreNodeId) {
+                menuRef.current?.toggle();
+              } else {
+                menuRef.current?.show();
+              }
+              setPrevClickMoreNodeId(node.id);
+            }}
+            key={node.id}
+            node={node}
+            times={0}
+            targetRef={targetRef}
+            {...props}
+          />
         ))}
       </div>
+      <Menu
+        ref={menuRef}
+        target={targetRef.current || undefined}
+        items={menuItems}
+      />
     </div>
   );
 }
@@ -49,8 +79,13 @@ export default function Tree<T>(props: NodeProps<T>) {
 type RenderTreeNodeProps<T> = CommonProps<T> & {
   node: Node<T>;
   times: number;
+  targetRef?: React.RefObject<HTMLDivElement>;
+  onMoreClick?: (node: Node<T>) => void;
 };
 function RenderTreeNode<T>({ node, ...props }: RenderTreeNodeProps<T>) {
+  function handleMoreClick() {
+    props.onMoreClick?.(node);
+  }
   return (
     <div className="node">
       <div
@@ -77,7 +112,14 @@ function RenderTreeNode<T>({ node, ...props }: RenderTreeNodeProps<T>) {
         )}
         {getIcon(node)}
         <span>{node.name}</span>
-        <div className="right">
+        <div
+          onClick={(e) => {
+            e.stopPropagation();
+            handleMoreClick();
+          }}
+          className="right"
+          ref={props.targetRef}
+        >
           <MoreHoriIcon />
         </div>
       </div>

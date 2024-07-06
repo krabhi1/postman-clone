@@ -44,9 +44,11 @@
   pointer-events: none;
 }
 
-.tree .node-head:hover,
+.tree .node-head:hover{
+  background-color: rgba(0, 0, 0, 0.06);
+}
 .tree .node-head.active {
-  background-color: rgba(0, 0, 0, 0.13);
+  background-color: rgba(0, 0, 0, 0.1);
 }
 .tree .node-children {
   position: relative;

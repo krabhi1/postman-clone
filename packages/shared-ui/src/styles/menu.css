@@ -1,0 +1,40 @@
+@import "./style.css";
+.menu {
+  position: fixed;
+  z-index: 1000;
+  top: 0;
+  right: 0;
+  height: max-content;
+}
+
+.menu .layer {
+  position: fixed;
+  /* z-index: 900; */
+  /* background-color: rgba(0, 0, 0, 0.151); */
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+
+.menu > .dropdown {
+  width: 100%;
+  max-width: 200px;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border) !important;
+  padding: 4px;
+  min-width: 100px;
+  height: max-content;
+  border-radius: var(--border-radius);
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+
+.menu > .dropdown > div {
+  padding: 0.2em 1em;
+  border-radius: var(--border-radius);
+}
+
+.menu > .dropdown > div:hover {
+  background-color: var(--color-primary);
+  color: var(--color-on-primary);
+}

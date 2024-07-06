@@ -1,19 +1,15 @@
-import {
-  CollectionItem,
-  FolderItem,
-  RequestItem,
-} from "common-utils/types";
-import {
-  useLiveStore,
-} from "../../../configs/liveblocks.config";
+import { CollectionItem, FolderItem, RequestItem } from "common-utils/types";
+import { useLiveStore } from "../../../configs/liveblocks.config";
 import "../../../styles/editor.css";
 import { useMemo, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 import { useLocalStore } from "../../../store/app.store";
 import Tree, { CollNode } from "../../Tree";
+import { Menu } from "../../Menu";
 
 export default function CollectionsSidebarItem() {
   const [activeNodeId, setActiveNodeId] = useState<string>();
+  
   const { collections = [], addCollection } = useLiveStore(
     useShallow((state) => ({
       collections: state.workspaceState?.collections,
@@ -76,6 +72,9 @@ export default function CollectionsSidebarItem() {
         }}
         onToggle={(node) => {
           updateLocal(node.id, { isOpen: !node.isOpen });
+        }}
+        optionMenuListCallback={(node) => {
+          return ["delete", "rename",node.name,node.id];
         }}
       />
     </div>
