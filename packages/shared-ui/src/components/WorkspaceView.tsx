@@ -256,10 +256,8 @@ const CollectionListView = React.memo(
 );
 
 export default function WorkspaceView({
-  _workspace,
   isShared,
 }: {
-  _workspace: ServerWorkspace;
   isShared: boolean;
 }) {
   const { workspace, addNewCollection, clearCollections } = useLiveStore(
@@ -286,6 +284,7 @@ export default function WorkspaceView({
       alert("Error," + result.message);
     }
   }
+  console.log("collectins",workspace.collections)
 
   return (
     <div className="box list">

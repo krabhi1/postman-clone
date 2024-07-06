@@ -109,3 +109,15 @@
   border-left: 1px dashed rgb(212, 212, 212);
   left: 1rem;
 }
+
+.tree .node-head .right{
+  align-items: center;
+  gap: 0.5em;
+  display: none;
+  position: relative;
+}
+
+.tree .node-head:hover .right,
+.tree .node-head.active .right {
+  display: flex;
+}

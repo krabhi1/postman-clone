@@ -46,6 +46,7 @@ export type LocalAction = {
   deleteWorkspace: (workspaceId: string) => void;
   fetchWorkspaces: () => Promise<void>;
   updateLocal: (key: string, value: Partial<Local>) => void;
+  getLocal: <T extends Local>(key: string) => T;
   //editor actions
   addEditorTab: (tab: EditorMainTab) => void;
   removeEditorTab: (tabId: string) => void;
@@ -101,6 +102,12 @@ export const useLocalStore: UseBoundStore<
       set((state) => {
         state.local[key] = { ...state.local[key], ...value };
       });
+    },
+    getLocal: <T extends Local>(key: string) => {
+      if (!useLocalStore.getState().local[key]) {
+        useLocalStore.getState().updateLocal(key, { isOpen: true } as T);
+      }
+      return useLocalStore.getState().local[key] as T;
     },
     addEditorTab: (tab: EditorMainTab) => {
       set((state) => {
