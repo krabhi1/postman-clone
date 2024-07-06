@@ -63,8 +63,6 @@ export const _Menu = forwardRef<MenuHandle, MenuProps>(
     function handleClick(item: MenuItem) {
       onItemSelect?.(item);
     }
-
-
     return (
       isOpen && (
         <div

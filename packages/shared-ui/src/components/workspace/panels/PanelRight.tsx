@@ -2,7 +2,7 @@ import TabView from "../../tab/TabView";
 import TabItem from "../../tab/TabItem";
 import { useShallow } from "zustand/react/shallow";
 import { EditorMainTab, useLocalStore } from "../../../store/app.store";
-import { EnvTab } from "../tabItems/EnvTab";
+import { EnvTabItem } from "../tabItems/EnvTabItem";
 
 export function PanelRight() {
   const { activeTabId, tabs, removeTab } = useLocalStore(
@@ -22,9 +22,9 @@ export function PanelRight() {
 
   function RenderTabContent(tab: EditorMainTab) {
     if (tab.type === "ENV" || tab.type === "GLOBAL_ENV") {
-      return <EnvTab id={tab.id} isGlobal={tab.type === "GLOBAL_ENV"} />;
+      return <EnvTabItem id={tab.id} isGlobal={tab.type === "GLOBAL_ENV"} />;
     }
-    return "No Render for type " + tab.type;
+    return "No Viewer for type " + tab.type;
   }
 
   function handleCloseTab(i: number) {

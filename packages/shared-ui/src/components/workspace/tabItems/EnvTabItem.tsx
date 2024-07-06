@@ -4,7 +4,7 @@ export type EnvTabProps = {
   id: string;
   isGlobal?: boolean;
 };
-export function EnvTab(props: EnvTabProps) {
+export function EnvTabItem(props: EnvTabProps) {
   const { env } = useLiveStore(
     useShallow((state) => ({
       env: state.getEnvById(props.id),

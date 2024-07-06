@@ -21,8 +21,7 @@ export type Node<T = any> = {
   renderNodeTemplate?: (node: Node<T>) => React.ReactNode;
 };
 
-export type CollNodeType = "folder" | "collection" | "request";
-export type CollNode = Node<{ type: CollNodeType; subtype?: string }>;
+
 
 type CommonProps<T> = {
   activeNodeId?: string;
@@ -45,7 +44,12 @@ export default function Tree<T>(props: NodeProps<T>) {
   const [prevClickMoreNodeId, setPrevClickMoreNodeId] = useState<string>();
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [activeHoverNodeId, setActiveHoverNodeId] = useState<string>();
-  console.log({ targetRef });
+  const [menuNode, setMenuNode] = useState<Node<T>>();
+  function handleMenuItemSelect(item: string) {
+    if (menuNode) {
+      props.onOptionMenuSelect?.(menuNode, item);
+    }
+  }
   return (
     <>
       <div className="tree">
@@ -54,11 +58,11 @@ export default function Tree<T>(props: NodeProps<T>) {
             <RenderTreeNode
               onMoreClick={(node) => {
                 setMenuItems(props.optionMenuListCallback?.(node) || []);
+                setMenuNode(node);
                 const rect = targetRef.current?.getBoundingClientRect();
                 if (rect) {
                   setPosition({ x: rect.left, y: rect.top });
                 }
-                console.log("more click", targetRef.current);
                 if (prevClickMoreNodeId && node.id === prevClickMoreNodeId) {
                   menuRef.current?.toggle();
                 } else {
@@ -70,17 +74,21 @@ export default function Tree<T>(props: NodeProps<T>) {
               node={node}
               times={0}
               targetRef={targetRef}
-              hoverNodeId={activeHoverNodeId}              
+              hoverNodeId={activeHoverNodeId}
               onNodeHover={(node) => {
                 setActiveHoverNodeId(node.id);
-                console.log("hover", node);
               }}
               {...props}
             />
           ))}
         </div>
       </div>
-      <Menu ref={menuRef} items={menuItems} position={position} />
+      <Menu
+        onItemSelect={handleMenuItemSelect}
+        ref={menuRef}
+        items={menuItems}
+        position={position}
+      />
     </>
   );
 }
@@ -158,28 +166,27 @@ function RenderTreeNode<T>({ node, ...props }: RenderTreeNodeProps<T>) {
     </div>
   );
 }
-
 export function getIcon(node: Node) {
   let type = node.data.type as string;
-  if (node.data.type == "request") {
+  if (node.data.type == "REQUEST") {
     type = node.data.subtype!;
   }
-  switch (type) {
-    case "folder":
+  switch (type.toUpperCase()) {
+    case "FOLDER":
       return <FolderIcon />;
-    case "get":
+    case "GET":
       return <img src={GetIcon} />;
-    case "post":
+    case "POST":
       return <img src={PostIcon} />;
-    case "put":
+    case "PUT":
       return <img src={PutIcon} />;
-    case "delete":
+    case "DELETE":
       return <img src={DeleteIcon} />;
-    case "patch":
+    case "PATCH":
       return <img src={PatchIcon} />;
-    case "head":
+    case "HEAD":
       return <img src={HeadIcon} />;
-    case "options":
+    case "OPTIONS":
       return <img src={OptionsIcon} />;
     default:
       return <span></span>;

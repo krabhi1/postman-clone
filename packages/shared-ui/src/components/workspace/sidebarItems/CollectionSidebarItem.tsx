@@ -1,26 +1,46 @@
-import { CollectionItem, FolderItem, RequestItem } from "common-utils/types";
+import {
+  CollectionItem,
+  FolderItem,
+  HttpMethod,
+  RequestItem,
+} from "common-utils/types";
 import { useLiveStore } from "../../../configs/liveblocks.config";
 import "../../../styles/editor.css";
 import { useMemo, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
-import { useLocalStore } from "../../../store/app.store";
-import Tree, { CollNode } from "../../Tree";
+import { EditorMainTab, useLocalStore } from "../../../store/app.store";
+import Tree, { Node } from "../../Tree";
 import { Menu } from "../../Menu";
-
+export type CollNodeType = "FOLDER" | "REQUEST" | "COLLECTION";
+export type CollNode = Node<{
+  type: CollNodeType;
+  subtype?: HttpMethod;
+  collectionId: string;
+}>;
 export default function CollectionsSidebarItem() {
   const [activeNodeId, setActiveNodeId] = useState<string>();
 
-  const { collections = [], addCollection } = useLiveStore(
+  const {
+    collections = [],
+    addCollection,
+    addRequest,
+    addFolder,
+    deleteItem,
+  } = useLiveStore(
     useShallow((state) => ({
       collections: state.workspaceState?.collections,
       addCollection: state.addNewCollection,
+      addRequest: state.addRequest,
+      addFolder: state.addFolder,
+      deleteItem: state.deleteItem,
     }))
   );
-  const { local, updateLocal, getLocal } = useLocalStore(
+  const { local, updateLocal, getLocal, addAndOpen } = useLocalStore(
     useShallow((state) => ({
       local: state.local,
       updateLocal: state.updateLocal,
       getLocal: state.getLocal,
+      addAndOpen: state.addEditorTabAndSetAsActive,
     }))
   );
 
@@ -35,12 +55,13 @@ export default function CollectionsSidebarItem() {
             const folder = item as FolderItem;
             children = toNode(folder.items) as CollNode[];
           } else {
-            subtype = (item as RequestItem).method.toLowerCase();
+            subtype = (item as RequestItem).method;
           }
+          const type = item.type.toUpperCase() as CollNodeType;
           return {
             id: item.id,
             children: children,
-            data: { type: item.type, subtype },
+            data: { type, subtype, collectionId: coll.id },
             name: item.name,
             isOpen: getLocal(item.id).isOpen,
           } as CollNode;
@@ -49,13 +70,66 @@ export default function CollectionsSidebarItem() {
       return {
         id: coll.id,
         children: toNode(coll.items),
-        data: { type: "collection" },
+        data: { type: "COLLECTION", collectionId: coll.id },
         name: coll.name,
         isOpen: getLocal(coll.id).isOpen,
       };
     });
   }, [local, collections]);
 
+  function handleOptionMenuSelect(node: CollNode, option: string) {
+    const collectionId = node.data.collectionId;
+    const itemId = node.id;
+    const type = node.data.type;
+    const subtype = node.data.subtype || "";
+    if (type === "COLLECTION") {
+      switch (option) {
+        case "new folder":
+          addFolder(collectionId, "New Folder");
+          break;
+        case "new request":
+          addRequest(collectionId, "New Request");
+          break;
+        case "open":
+          addAndOpen({ id: itemId, type: "COLLECTION", name: node.name });
+          break;
+      }
+    } else if (type === "FOLDER") {
+      switch (option) {
+        case "new folder":
+          addFolder(collectionId, "New Folder", itemId);
+          break;
+        case "new request":
+          addRequest(collectionId, "New Request", itemId);
+          break;
+        case "open":
+          addAndOpen({ id: itemId, type: "FOLDER", name: node.name });
+          break;
+      }
+    } else if (type === "REQUEST") {
+      switch (option) {
+        case "open":
+          addAndOpen({
+            id: itemId,
+            type: subtype.toUpperCase() as EditorMainTab["type"],
+            name: node.name,
+          });
+          break;
+      }
+    }
+  }
+  function openNode(node: CollNode) {
+    console.log("open node", node);
+    const type =
+      node.data.type == "COLLECTION" || node.data.type == "FOLDER"
+        ? node.data.type
+        : node.data.subtype || ("" as EditorMainTab["type"]);
+    addAndOpen({
+      id: node.id,
+      type,
+      name: node.name,
+    });
+  }
   return (
     <div className="coll-panel">
       <button
@@ -68,7 +142,7 @@ export default function CollectionsSidebarItem() {
         activeNodeId={activeNodeId}
         onNodeClick={(node) => {
           setActiveNodeId(node.id);
-          console.log("node clicked", node);
+          openNode(node);
         }}
         onToggle={(node) => {
           updateLocal(node.id, { isOpen: !node.isOpen });
@@ -76,17 +150,18 @@ export default function CollectionsSidebarItem() {
         optionMenuListCallback={(node) => {
           let type = node.data.type;
           const common = ["open", "delete", "duplicate", "rename"];
-          if (type === "collection") {
+          if (type === "COLLECTION") {
             return ["new folder", "new request", ...common];
           }
-          if (type === "folder") {
+          if (type === "FOLDER") {
             return ["new folder", "new request", ...common];
           }
-          if (type === "request") {
-            return ["duplicate", "send", ...common];
+          if (type === "REQUEST") {
+            return ["send", ...common];
           }
           return [];
         }}
+        onOptionMenuSelect={handleOptionMenuSelect}
       />
     </div>
   );

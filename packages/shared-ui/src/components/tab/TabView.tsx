@@ -51,7 +51,6 @@ export default function TabView({
   function handleTabChange(index: number) {
     setIndex(index);
     onTabChange?.(index);
-    console.log("Tab changed to", index);
   }
 
   function handleCloseTab(index: number) {
@@ -63,16 +62,13 @@ export default function TabView({
       handleTabChange(nextIndex);
     }
     onTabClose?.(index);
-    console.log("Tab closed", index);
   }
-  // console.log({ tabs, hiddenTab: hiddenTabs, count: Children.count(children) });
 
   useEffect(() => {
     handleTabChange(activeIndex);
   }, [activeIndex]);
 
   const isEmpty = tabs.length === 0;
-  console.log(isEmpty);
 
   if (isEmpty && renderEmpty) {
     return <>{renderEmpty()}</>;
