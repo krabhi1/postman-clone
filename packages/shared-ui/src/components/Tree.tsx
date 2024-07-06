@@ -43,36 +43,45 @@ export default function Tree<T>(props: NodeProps<T>) {
   const menuRef = useRef<MenuHandle>(null);
   const [menuItems, setMenuItems] = useState<string[]>([]);
   const [prevClickMoreNodeId, setPrevClickMoreNodeId] = useState<string>();
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [activeHoverNodeId, setActiveHoverNodeId] = useState<string>();
   console.log({ targetRef });
   return (
-    <div className="tree">
-      <div>
-        {props.nodes.map((node) => (
-          <RenderTreeNode
-            onMoreClick={(node) => {
-              setMenuItems(props.optionMenuListCallback?.(node) || []);
-              console.log("more click", node.id, prevClickMoreNodeId);
-              if (prevClickMoreNodeId && node.id === prevClickMoreNodeId) {
-                menuRef.current?.toggle();
-              } else {
-                menuRef.current?.show();
-              }
-              setPrevClickMoreNodeId(node.id);
-            }}
-            key={node.id}
-            node={node}
-            times={0}
-            targetRef={targetRef}
-            {...props}
-          />
-        ))}
+    <>
+      <div className="tree">
+        <div>
+          {props.nodes.map((node) => (
+            <RenderTreeNode
+              onMoreClick={(node) => {
+                setMenuItems(props.optionMenuListCallback?.(node) || []);
+                const rect = targetRef.current?.getBoundingClientRect();
+                if (rect) {
+                  setPosition({ x: rect.left, y: rect.top });
+                }
+                console.log("more click", targetRef.current);
+                if (prevClickMoreNodeId && node.id === prevClickMoreNodeId) {
+                  menuRef.current?.toggle();
+                } else {
+                  menuRef.current?.show();
+                }
+                setPrevClickMoreNodeId(node.id);
+              }}
+              key={node.id}
+              node={node}
+              times={0}
+              targetRef={targetRef}
+              hoverNodeId={activeHoverNodeId}              
+              onNodeHover={(node) => {
+                setActiveHoverNodeId(node.id);
+                console.log("hover", node);
+              }}
+              {...props}
+            />
+          ))}
+        </div>
       </div>
-      <Menu
-        ref={menuRef}
-        target={targetRef.current || undefined}
-        items={menuItems}
-      />
-    </div>
+      <Menu ref={menuRef} items={menuItems} position={position} />
+    </>
   );
 }
 
@@ -80,12 +89,16 @@ type RenderTreeNodeProps<T> = CommonProps<T> & {
   node: Node<T>;
   times: number;
   targetRef?: React.RefObject<HTMLDivElement>;
+  hoverNodeId?: string;
   onMoreClick?: (node: Node<T>) => void;
+  onNodeHover?: (node: Node<T>) => void;
 };
 function RenderTreeNode<T>({ node, ...props }: RenderTreeNodeProps<T>) {
   function handleMoreClick() {
     props.onMoreClick?.(node);
   }
+  const isActive = props.activeNodeId === node.id;
+  const isHover = props.hoverNodeId === node.id;
   return (
     <div className="node">
       <div
@@ -93,6 +106,9 @@ function RenderTreeNode<T>({ node, ...props }: RenderTreeNodeProps<T>) {
         style={{ paddingLeft: `${props.times * 2 + 1}rem` }}
         onClick={() => {
           props.onNodeClick?.(node);
+        }}
+        onMouseEnter={() => {
+          props.onNodeHover?.(node);
         }}
       >
         {node.children ? (
@@ -118,7 +134,7 @@ function RenderTreeNode<T>({ node, ...props }: RenderTreeNodeProps<T>) {
             handleMoreClick();
           }}
           className="right"
-          ref={props.targetRef}
+          ref={isHover ? props.targetRef : undefined}
         >
           <MoreHoriIcon />
         </div>

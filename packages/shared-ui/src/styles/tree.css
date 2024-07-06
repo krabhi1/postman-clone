@@ -75,7 +75,6 @@
   align-items: center;
   gap: 0.5em;
   display: none;
-  position: relative;
 }
 
 .tree .node-head:hover .right,

@@ -4,7 +4,9 @@
   z-index: 1000;
   top: 0;
   right: 0;
-  height: max-content;
+  width: fit-content;
+  height: fit-content;
+  padding: 4px;
 }
 
 .menu .layer {
@@ -18,13 +20,11 @@
 }
 
 .menu > .dropdown {
-  width: 100%;
   max-width: 200px;
   background-color: var(--color-surface);
   border: 1px solid var(--color-border) !important;
   padding: 4px;
   min-width: 100px;
-  height: max-content;
   border-radius: var(--border-radius);
   box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }

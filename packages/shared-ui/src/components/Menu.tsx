@@ -11,8 +11,7 @@ export type MenuItem = string;
 export type MenuProps = {
   items: MenuItem[];
   isPopup?: boolean;
-  target?: HTMLElement;
-  anchor?: { x: number; y: number };
+  position?: { x: number; y: number };
   onItemSelect?: (item: MenuItem) => void;
 };
 export type MenuHandle = {
@@ -26,15 +25,13 @@ export const _Menu = forwardRef<MenuHandle, MenuProps>(
     {
       items,
       isPopup = true,
-      anchor = { x: 0.5, y: 0.5 },
-      target = document.body,
+      position = { x: 100, y: 100 },
       onItemSelect,
     }: MenuProps,
     ref
   ) => {
     const [isOpen, setIsOpen] = useState(false);
     const menuMainRef = useRef<HTMLDivElement>(null);
-    console.log("menu rendered", target);
     useEffect(() => {
       const handleClick = (e: MouseEvent) => {
         if (isOpen) {
@@ -71,9 +68,17 @@ export const _Menu = forwardRef<MenuHandle, MenuProps>(
       console.log("item clicked", item);
     }
 
+
     return (
       isOpen && (
-        <div ref={menuMainRef} className="menu">
+        <div
+          ref={menuMainRef}
+          className="menu"
+          style={{
+            left:position.x,
+            top:position.y,
+          }}
+        >
           <div className="dropdown">
             {items.map((item) => (
               <div key={item} onClick={() => handleClick(item)}>
