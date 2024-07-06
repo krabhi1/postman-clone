@@ -59,6 +59,14 @@
   gap: 0.2rem;
   height: 2em;
 }
+.tree .node-head .icon-arrow-wrap{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+  height: 100%;
+  
+}
 .tree .node-head .icon-arrow {
   height: 12px !important;
   width: max-content;

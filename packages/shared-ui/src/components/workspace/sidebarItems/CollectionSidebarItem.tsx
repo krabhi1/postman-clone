@@ -3,17 +3,47 @@ import { useLiveStore } from "../../../configs/liveblocks.config";
 import "../../../styles/editor.css";
 import ArrowRightIcon from "../../../icons/ArrowRightIcon";
 import { useEffect, useState } from "react";
+import { useImmer } from "use-immer";
 export function CollectionSidebarItem() {
-  const [data,setData]=useState(_data)
-  const [activeNodeId,setActiveNodeId]=useState<string>()
-  
+  const [data, setData] = useImmer(_data);
+  const [activeNodeId, setActiveNodeId] = useState<string>();
+
+  function findNode(id: string, nodes: CollNode[]) {
+    let node: CollNode | undefined;
+    function find(nodes: CollNode[]) {
+      for (let i = 0; i < nodes.length; i++) {
+        if (nodes[i].id === id) {
+          node = nodes[i];
+          break;
+        }
+        const child = nodes[i].children;
+        if (child) {
+          find(child);
+        }
+      }
+    }
+    find(nodes);
+    return node;
+  }
+
   return (
     <div className="coll-panel">
       <button>New Collection</button>
-      <Tree nodes={_data} activeNodeId={activeNodeId}
-      onActiveNodeChange={(node)=>{
-        console.log("active node",node)
-      }}
+      <Tree
+        nodes={data}
+        activeNodeId={activeNodeId}
+        onNodeClick={(node) => {
+          setActiveNodeId(node.id);
+          console.log("node clicked", node);
+        }}
+        onToggle={(node) => {
+          setData((draft) => {
+            const n = findNode(node.id, draft);
+            if (n) {
+              n.isOpen = !n.isOpen;
+            }
+          });
+        }}
       />
     </div>
   );
@@ -35,7 +65,7 @@ type CommonProps<T> = {
   activeNodeId?: string;
   onNodeClick?: (node: Node<T>) => void;
   onToggle?: (node: Node<T>) => void;
-  onActiveNodeChange?: (node: Node<T>) => void;
+  // onActiveNodeChange?: (node: Node<T>) => void;
 };
 export type NodeProps<T> = CommonProps<T> & {
   nodes: Node<T>[];
@@ -48,20 +78,32 @@ function RenderTreeNode<T>({ node, ...props }: RenderTreeNodeProps<T>) {
   return (
     <div className="node">
       <div
-        className={"node-head" + (node.children ? "" : "")}
+        className={`node-head ${props.activeNodeId === node.id ? "active" : ""}`}
         style={{ paddingLeft: `${props.times * 2 + 1}rem` }}
+        onClick={() => {
+          props.onNodeClick?.(node);
+        }}
       >
         {node.children && (
-          <ArrowRightIcon
-            className={`icon-arrow ${node.isOpen ? "open" : ""}`}
-          />
+          <span
+            className="icon-arrow-wrap"
+            onClick={(e) => {
+              e.stopPropagation();
+              props.onToggle?.(node);
+            }}
+          >
+            <ArrowRightIcon
+              className={`icon-arrow ${node.isOpen ? "open" : ""}`}
+            />
+          </span>
         )}
         <span>{node.name}</span>
       </div>
-      {node.children && (
+      {node.children && node.isOpen && (
         <div className="node-children">
           {node.children.map((child) => (
             <RenderTreeNode
+              {...props}
               key={child.id}
               node={child}
               times={props.times + 1}
@@ -142,7 +184,7 @@ const _data: CollNode[] = [
     data: { type: "folder" },
   },
   {
-    id: "2",
+    id: "20",
     name: "root2",
     children: [
       {
