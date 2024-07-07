@@ -26,6 +26,7 @@ export default function CollectionsSidebarItem() {
     addRequest,
     addFolder,
     deleteItem,
+    duplicateItem,
   } = useLiveStore(
     useShallow((state) => ({
       collections: state.workspaceState?.collections,
@@ -33,6 +34,7 @@ export default function CollectionsSidebarItem() {
       addRequest: state.addRequest,
       addFolder: state.addFolder,
       deleteItem: state.deleteItem,
+      duplicateItem: state.duplicateItem,
     }))
   );
   const { local, updateLocal, getLocal, addAndOpen } = useLocalStore(
@@ -78,44 +80,42 @@ export default function CollectionsSidebarItem() {
   }, [local, collections]);
 
   function handleOptionMenuSelect(node: CollNode, option: string) {
-    const collectionId = node.data.collectionId;
-    const itemId = node.id;
+    const collectionId =
+      node.data.type === "COLLECTION" ? node.id : node.data.collectionId;
+    const itemId = node.data.type === "COLLECTION" ? undefined : node.id;
     const type = node.data.type;
     const subtype = node.data.subtype || "";
-    if (type === "COLLECTION") {
-      switch (option) {
-        case "new folder":
-          addFolder(collectionId, "New Folder");
-          break;
-        case "new request":
-          addRequest(collectionId, "New Request");
-          break;
-        case "open":
-          addAndOpen({ id: itemId, type: "COLLECTION", name: node.name });
-          break;
-      }
-    } else if (type === "FOLDER") {
-      switch (option) {
-        case "new folder":
-          addFolder(collectionId, "New Folder", itemId);
-          break;
-        case "new request":
-          addRequest(collectionId, "New Request", itemId);
-          break;
-        case "open":
-          addAndOpen({ id: itemId, type: "FOLDER", name: node.name });
-          break;
-      }
-    } else if (type === "REQUEST") {
-      switch (option) {
-        case "open":
-          addAndOpen({
-            id: itemId,
-            type: subtype.toUpperCase() as EditorMainTab["type"],
-            name: node.name,
-          });
-          break;
-      }
+    const openType = (
+      type == "REQUEST" ? subtype : type
+    ).toUpperCase() as EditorMainTab["type"];
+
+    console.log("option", option, node);
+
+    switch (option) {
+      //all case
+      case "rename":
+        break;
+      case "duplicate":
+        duplicateItem(collectionId, itemId);
+        break;
+      case "new folder":
+        addFolder(collectionId, "New Folder", itemId);
+        break;
+      case "new request":
+        addRequest(collectionId, "New Request", itemId);
+        break;
+      case "open":
+        addAndOpen({
+          id: itemId || collectionId,
+          type: openType,
+          name: node.name,
+        });
+        break;
+      case "delete":
+        deleteItem(collectionId, itemId);
+        break;
+      case "send":
+        break;
     }
   }
   function openNode(node: CollNode) {

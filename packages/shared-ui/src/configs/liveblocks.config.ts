@@ -78,6 +78,7 @@ type Action = {
     item: Partial<CollectionItem | Collection>,
     itemId?: string
   ) => void;
+  duplicateItem: (collectionId: string, itemId?: string) => void;
   //env
   addEnvironment: (name: string) => void;
   getEnvById: (id: string) => Environment | undefined;
@@ -105,9 +106,29 @@ const findFolder = (collection: Collection, folderId: string) => {
   return _findFolder(collection.items);
 };
 
+function findItem(collection: Collection, itemId: string) {
+  let item: CollectionItem | undefined;
+  let parent: FolderItem | undefined;
+  const _findItem = (items: CollectionItem[], parentFolder?: FolderItem) => {
+    for (const i of items) {
+      if (i.id === itemId) {
+        item = i;
+        parent = parentFolder;
+        return;
+      }
+      if (i.type === "folder") {
+        _findItem((i as FolderItem).items, i as FolderItem);
+      }
+    }
+  };
+  _findItem(collection.items);
+  return { item, parent };
+}
+
 export const useLiveStore = create<WithLiveblocks<State & Action, Presence>>()(
   immer(
     liveblocks(
+      // @ts-ignore
       (set, get) => ({
         clearWorkspaceState() {
           set((state) => {
@@ -246,6 +267,123 @@ export const useLiveStore = create<WithLiveblocks<State & Action, Presence>>()(
                   }
                 };
                 _updateItem(collection.items);
+              }
+            }
+          });
+        },
+        duplicateItem(collectionId, itemId) {
+          set((state) => {
+            if (state.workspaceState) {
+              const collection = state.workspaceState.collections.find(
+                (collection) => collection.id === collectionId
+              );
+              //duplicate collection and its children
+              if (collection && !itemId) {
+                const cloneCollection: Collection = {
+                  ...collection,
+                  name: collection.name + " clone",
+                  id: nanoid(),
+                  createdAt: Date.now(),
+                  items: [],
+                };
+                const _duplicateItems = (
+                  items: CollectionItem[],
+                  parent?: FolderItem
+                ) => {
+                  for (const item of items) {
+                    if (item.type === "folder") {
+                      const folder = item as FolderItem;
+                      const cloneFolder: FolderItem = {
+                        ...folder,
+                        id: nanoid(),
+                        items: [],
+                        name: folder.name,
+                      };
+                      if (parent) {
+                        parent.items.push(cloneFolder);
+                      } else {
+                        cloneCollection.items.push(cloneFolder);
+                      }
+                      _duplicateItems(folder.items, cloneFolder);
+                    } else {
+                      const request = item as RequestItem;
+                      const cloneRequest: RequestItem = {
+                        ...request,
+                        id: nanoid(),
+                        createdAt: Date.now(),
+                        name: request.name,
+                      };
+                      if (parent) {
+                        parent.items.push(cloneRequest);
+                      } else {
+                        cloneCollection.items.push(cloneRequest);
+                      }
+                    }
+                  }
+                };
+                _duplicateItems(collection.items);
+                state.workspaceState.collections.push(cloneCollection);
+              } else if (collection && itemId) {
+                //duplicate item
+                const { item, parent } = findItem(collection, itemId);
+                if (!item) {
+                  return;
+                }
+                const _duplicateItem = (
+                  items: CollectionItem[],
+                  parent: FolderItem
+                ) => {
+                  for (const item of items) {
+                    if (item.type == "folder") {
+                      const folder = item as FolderItem;
+                      const cloneFolder: FolderItem = {
+                        ...folder,
+                        id: nanoid(),
+                        items: [],
+                        name: folder.name,
+                      };
+                      parent.items.push(cloneFolder);
+                      _duplicateItem(folder.items, cloneFolder);
+                    } else {
+                      const request = item as RequestItem;
+                      const cloneRequest: RequestItem = {
+                        ...request,
+                        id: nanoid(),
+                        createdAt: Date.now(),
+                        name: request.name,
+                      };
+                      parent.items.push(cloneRequest);
+                    }
+                  }
+                };
+                if (item.type == "request") {
+                  const request = item as RequestItem;
+                  const cloneRequest: RequestItem = {
+                    ...request,
+                    id: nanoid(),
+                    createdAt: Date.now(),
+                    name: request.name+" clone",
+                  };
+                  if (parent) {
+                    parent.items.push(cloneRequest);
+                  } else {
+                    collection.items.push(cloneRequest);
+                  }
+                } else {
+                  const folder = item as FolderItem;
+                  const cloneFolder: FolderItem = {
+                    ...folder,
+                    id: nanoid(),
+                    items: [],
+                    name: folder.name+"clone",
+                  };
+                  if (parent) {
+                    parent.items.push(cloneFolder);
+                  } else {
+                    collection.items.push(cloneFolder);
+                  }
+                  _duplicateItem(folder.items, cloneFolder);
+                }
               }
             }
           });
