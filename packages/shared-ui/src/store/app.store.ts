@@ -15,18 +15,12 @@ export type CollectionLocal = {
   some: string;
 };
 export type Local = FolderLocal | CollectionLocal;
-export type EditorMainTab = {
+export type EditorTabItemState = {
   id: string;
   name: string;
-  type:
-    | "POST"
-    | "GET"
-    | "PUT"
-    | "DELETE"
-    | "ENV"
-    | "GLOBAL_ENV"
-    | "FOLDER"
-    | "COLLECTION";
+  type: "REQUEST" | "ENV" | "GLOBAL_ENV" | "FOLDER" | "COLLECTION";
+  // subType?: string | "POST" | "GET" | "PUT" | "DELETE";
+  data?: any;
 };
 export type LocalState = {
   // isAuth: boolean;
@@ -34,7 +28,7 @@ export type LocalState = {
   workspaceGroup?: WorkspaceGroup;
   local: KeyValue<Local>;
   //editor open tabs state
-  editorTabs: EditorMainTab[];
+  editorTabs: EditorTabItemState[];
   editorActiveTabId?: string;
 };
 
@@ -48,10 +42,10 @@ export type LocalAction = {
   updateLocal: (key: string, value: Partial<Local>) => void;
   getLocal: <T extends Local>(key: string) => T;
   //editor actions
-  addEditorTab: (tab: EditorMainTab) => void;
+  addEditorTab: (tab: EditorTabItemState) => void;
   removeEditorTab: (tabId: string) => void;
   setActiveEditorTab: (tabId: string) => void;
-  addEditorTabAndSetAsActive: (tab: EditorMainTab) => void;
+  addEditorTabAndSetAsActive: (tab: EditorTabItemState) => void;
 };
 function isEditorTabExists(tabId: string) {
   return useLocalStore.getState().editorTabs.some((t) => t.id === tabId);
@@ -109,7 +103,7 @@ export const useLocalStore: UseBoundStore<
       }
       return useLocalStore.getState().local[key] as T;
     },
-    addEditorTab: (tab: EditorMainTab) => {
+    addEditorTab: (tab: EditorTabItemState) => {
       set((state) => {
         if (isEditorTabExists(tab.id)) {
           return;
@@ -130,7 +124,7 @@ export const useLocalStore: UseBoundStore<
         }
       });
     },
-    addEditorTabAndSetAsActive: (tab: EditorMainTab) => {
+    addEditorTabAndSetAsActive: (tab: EditorTabItemState) => {
       set((state) => {
         if (isEditorTabExists(tab.id)) {
           state.editorActiveTabId = tab.id;

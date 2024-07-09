@@ -8,7 +8,7 @@ import { useLiveStore } from "../../../configs/liveblocks.config";
 import "../../../styles/editor.css";
 import { useMemo, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
-import { EditorMainTab, useLocalStore } from "../../../store/app.store";
+import { EditorTabItemState, useLocalStore } from "../../../store/app.store";
 import Tree, { Node } from "../../Tree";
 import { Menu } from "../../Menu";
 export type CollNodeType = "FOLDER" | "REQUEST" | "COLLECTION";
@@ -84,10 +84,7 @@ export default function CollectionsSidebarItem() {
       node.data.type === "COLLECTION" ? node.id : node.data.collectionId;
     const itemId = node.data.type === "COLLECTION" ? undefined : node.id;
     const type = node.data.type;
-    const subtype = node.data.subtype || "";
-    const openType = (
-      type == "REQUEST" ? subtype : type
-    ).toUpperCase() as EditorMainTab["type"];
+    const subtype = node.data.subtype;
 
     console.log("option", option, node);
 
@@ -107,8 +104,9 @@ export default function CollectionsSidebarItem() {
       case "open":
         addAndOpen({
           id: itemId || collectionId,
-          type: openType,
+          type: type,
           name: node.name,
+          data: { subtype, collectionId },
         });
         break;
       case "delete":
@@ -119,15 +117,16 @@ export default function CollectionsSidebarItem() {
     }
   }
   function openNode(node: CollNode) {
-    console.log("open node", node);
-    const type =
-      node.data.type == "COLLECTION" || node.data.type == "FOLDER"
-        ? node.data.type
-        : node.data.subtype || ("" as EditorMainTab["type"]);
+    const collectionId =
+      node.data.type === "COLLECTION" ? node.id : node.data.collectionId;
+    const itemId = node.data.type === "COLLECTION" ? undefined : node.id;
+    const type = node.data.type;
+    const subtype = node.data.subtype;
     addAndOpen({
-      id: node.id,
-      type,
+      id: itemId || collectionId,
+      type: type,
       name: node.name,
+      data: { subtype, collectionId },
     });
   }
   return (

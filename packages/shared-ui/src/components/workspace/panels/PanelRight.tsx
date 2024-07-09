@@ -1,8 +1,9 @@
 import TabView from "../../tab/TabView";
 import TabItem from "../../tab/TabItem";
 import { useShallow } from "zustand/react/shallow";
-import { EditorMainTab, useLocalStore } from "../../../store/app.store";
-import { EnvTabItem } from "../tabItems/EnvTabItem";
+import { EditorTabItemState, useLocalStore } from "../../../store/app.store";
+import { EnvViewer } from "../viewer/EnvViewer";
+import RequestViewer from "../viewer/RequestViewer";
 
 export function PanelRight() {
   const { activeTabId, tabs, removeTab } = useLocalStore(
@@ -20,11 +21,20 @@ export function PanelRight() {
     return tabs[index].id;
   }
 
-  function RenderTabContent(tab: EditorMainTab) {
+  function RenderTabContent(tab: EditorTabItemState) {
     if (tab.type === "ENV" || tab.type === "GLOBAL_ENV") {
-      return <EnvTabItem id={tab.id} isGlobal={tab.type === "GLOBAL_ENV"} />;
+      return <EnvViewer id={tab.id} isGlobal={tab.type === "GLOBAL_ENV"} />;
     }
-    return "No Viewer for type " + tab.type;
+    if (tab.type === "REQUEST") {
+      return (
+        <RequestViewer
+          id={tab.id}
+          collectionId={tab.data.collectionId}
+          method={tab.data.subtype}
+        />
+      );
+    }
+    return "No Viewer for type " + tab.type + " " + JSON.stringify(tab);
   }
 
   function handleCloseTab(i: number) {
