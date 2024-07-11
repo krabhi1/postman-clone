@@ -1,0 +1,28 @@
+@import "./style.css";
+table.table {
+  width: 100%;
+}
+
+table.table,
+.table th,
+.table td {
+  border: 1px solid var(--color-border);
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.table th {
+  padding: 0.5em 1em;
+}
+
+.table input {
+  padding: 0.5em 1em;
+  border: none;
+  display: block;
+  width: calc(100% - 2em);
+  outline: none;
+}
+
+.table input:focus {
+  outline: 1px solid var(--color-primary);
+}

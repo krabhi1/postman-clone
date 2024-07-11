@@ -3,4 +3,65 @@
 .req-viewer {
   width: 100%;
   height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.req-panel{
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.req-tab{
+  flex: 1;
+  overflow: auto;
+}
+
+.req-panel .input-box{
+  display: grid;
+  grid-template-columns: auto max-content;
+  gap: 0.5rem;
+  align-items: center;
+  /* margin-bottom: 0.5rem; */
+  margin: 1rem;
+  margin-top: 0;
+
+
+}
+
+.req-panel .input-box .input-area{
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border: 1px solid rgb(153, 153, 153);
+  border-radius: var(--border-radius);
+}
+
+.req-panel .input-box .input-area span{
+  display: block;
+  height: 24px;
+  width: 1px;
+  background-color: var(--color-border);
+}
+
+.req-panel .input-box .input-area input,
+.req-panel .input-box .input-area select{
+  padding: 0.5rem;
+  border: none;
+  outline: none;
+  background-color: transparent;
+  height: 40px;
+  padding: 0 1em;
+}
+
+.req-panel .input-box .input-area input{
+  width: 100%;
+}
+
+.req-panel .input-box button{
+  height: 40px;
+  padding: 0 1.5em !important;
+  font-weight: 600;
+  font-size: var(--avg-font);
 }

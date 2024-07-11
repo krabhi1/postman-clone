@@ -8,7 +8,7 @@
 .tab-list {
   width: 100%;
  /* height = fit-content +2 */
-  height: 28px;
+  min-height: 28px;
 
   /* scrollbar-gutter: stable both-edges; */
 }
