@@ -6,6 +6,8 @@
   "type": "module",
   "scripts": {
     "temp:run": "node ./dist/run.js",
+    "predev":"pnpm run prisma:generate",
+    "prebuild":"pnpm run prisma:generate",
     "dev": "npm run watch & npx nodemon -e js --exec 'npm run start' ",
     "start":"node ./dist/main.js",
     "watch": "tsc --watch",

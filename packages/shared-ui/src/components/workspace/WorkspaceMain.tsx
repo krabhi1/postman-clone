@@ -20,6 +20,7 @@ function Content({ index }: { index: number | undefined }) {
 
   return (
     <Split
+      sizes={[30, 70]}
       className="split"
       gutterSize={1}
       snapOffset={[150, 0]}

@@ -12,7 +12,7 @@ export type RequestViewerProps = {
 export default function RequestViewer(props: RequestViewerProps) {
   return (
     <div className="req-viewer">
-      <Split gutterSize={1} minSize={[100,0]} snapOffset={[0,100]} className="split-h" direction="vertical">
+      <Split sizes={[70,30]} gutterSize={1} minSize={[100,0]} snapOffset={[0,100]} className="split-h" direction="vertical">
         <RequestPanel />
         <ResponsePanel />
       </Split>

@@ -16,6 +16,9 @@
 .req-tab{
   flex: 1;
   overflow: auto;
+  margin:  1rem ;
+  margin-top: 0;
+
 }
 
 .req-panel .input-box{
