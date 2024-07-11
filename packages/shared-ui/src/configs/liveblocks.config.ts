@@ -79,6 +79,13 @@ type Action = {
     itemId?: string
   ) => void;
   duplicateItem: (collectionId: string, itemId?: string) => void;
+  getItem: (
+    collectionId: string,
+    id?: string
+  ) => CollectionItem | Collection | undefined;
+  getRequest: (collectionId: string, id: string) => RequestItem | undefined;
+  getItemPath: (collectionId: string, id?: string) => string;
+
   //env
   addEnvironment: (name: string) => void;
   getEnvById: (id: string) => Environment | undefined;
@@ -362,7 +369,7 @@ export const useLiveStore = create<WithLiveblocks<State & Action, Presence>>()(
                     ...request,
                     id: nanoid(),
                     createdAt: Date.now(),
-                    name: request.name+" clone",
+                    name: request.name + " clone",
                   };
                   if (parent) {
                     parent.items.push(cloneRequest);
@@ -375,7 +382,7 @@ export const useLiveStore = create<WithLiveblocks<State & Action, Presence>>()(
                     ...folder,
                     id: nanoid(),
                     items: [],
-                    name: folder.name+"clone",
+                    name: folder.name + "clone",
                   };
                   if (parent) {
                     parent.items.push(cloneFolder);
@@ -387,6 +394,52 @@ export const useLiveStore = create<WithLiveblocks<State & Action, Presence>>()(
               }
             }
           });
+        },
+        getItem(collectionId, id) {
+          if (id) {
+            const collection = get().workspaceState?.collections.find(
+              (collection) => collection.id === collectionId
+            );
+            if (collection) {
+              const { item } = findItem(collection, id);
+              return item;
+            }
+          }
+          return get().workspaceState?.collections.find(
+            (collection) => collection.id === collectionId
+          );
+        },
+        getRequest(collectionId, id) {
+          const item = get().getItem(collectionId, id);
+          if (item && (item as RequestItem).type === "request") {
+            return item as RequestItem;
+          }
+          return undefined;
+        },
+        getItemPath(collectionId, id) {
+          let path = "";
+          const collection = get().workspaceState?.collections.find(
+            (collection) => collection.id === collectionId
+          );
+          if (collection) {
+            path += collection.name;
+            const _find = (items: CollectionItem[], parentPath: string) => {
+              for (const item of items) {
+                if (item.id === id) {
+                  path = parentPath + "/" + item.name;
+                  return;
+                }
+                if (item.type === "folder") {
+                  _find(
+                    (item as FolderItem).items,
+                    parentPath + "/" + item.name
+                  );
+                }
+              }
+            };
+            _find(collection.items, collection.name);
+          }
+          return path;
         },
         addEnvironment(name) {
           set((state) => {
@@ -427,6 +480,18 @@ export const useLiveStore = create<WithLiveblocks<State & Action, Presence>>()(
 export function useWorkspaceState() {
   return useLiveStore((state) => state.workspaceState!);
 }
+
+// export function useRequest(collectionId: string, id: string) {
+//   return useLiveStore(
+//     useShallow((state) => {
+//       const item = state.getItem(collectionId, id);
+//       if (item && (item as RequestItem).type === "request") {
+//         return item as RequestItem;
+//       }
+//       return undefined;
+//     })
+//   );
+// }
 
 // export function useShallowLiveState(selector: (state: State) => Action & State) {
 //   return useLiveStore(useShallow(selector));

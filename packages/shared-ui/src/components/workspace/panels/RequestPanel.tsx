@@ -1,13 +1,22 @@
+import { HttpMethod, RequestItem } from "common-utils/types";
 import BreadCrumb from "../../BreadCrumb";
 import TabItem from "../../tab/TabItem";
 import TabView from "../../tab/TabView";
 import Table from "../../Table";
 
-export function RequestPanel() {
+type RequestPanelProps = {
+  collectionId: string;
+  request:RequestItem
+  path:string
+  onHttpMethodChange?: (method: HttpMethod) => void;
+  onSendRequest?: () => void;
+}
+export function RequestPanel(props: RequestPanelProps) {
+
   return (
     <div className="req-panel">
       {/*  BreadCrumb*/}
-      <BreadCrumb path="a/b/c/123" />
+      <BreadCrumb path={props.path}/>
       {/* input box */}
       <RequestInputBox />
       {/* request tab */}
