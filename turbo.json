@@ -19,6 +19,20 @@
         "!.next/cache/**"
       ]
     },
+    "build:linux": {
+      "dependsOn": [
+        "^build"
+      ],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        ".env",
+        ".env.*"
+      ],
+      "outputs": [
+        ".next/**",
+        "!.next/cache/**"
+      ]
+    },
     "lint": {
       "dependsOn": [
         "^lint"

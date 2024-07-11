@@ -1,11 +1,11 @@
-import { app, shell, BrowserWindow, ipcMain } from 'electron'
+import { app, shell, BrowserWindow, ipcMain,dialog } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
-
+let mainWindow: BrowserWindow
 function createWindow(): void {
   // Create the browser window.
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 900,
     height: 670,
     show: false,
@@ -40,7 +40,7 @@ function createWindow(): void {
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
   // Set app user model id for windows
-  electronApp.setAppUserModelId('com.electron')
+  electronApp.setAppUserModelId('com.postman-clone.app')
 
   // Default open or close DevTools by F12 in development
   // and ignore CommandOrControl + R in production.
@@ -74,8 +74,27 @@ app.on('window-all-closed', () => {
 // code. You can also put them in separate files and require them here.
 
 app.setAsDefaultProtocolClient('postman-clone-abhi')
-app.on('open-url', (e, data) => {
-  console.log('auth response', { data })
-})
 
+const gotTheLock = app.requestSingleInstanceLock()
+if (!gotTheLock) {
+  app.quit()
+} else {
+  app.on('second-instance', (event, commandLine, workingDirectory) => {
+    // Someone tried to run a second instance, we should focus our window.
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) mainWindow.restore()
+      mainWindow.focus()
+    }
 
+    dialog.showErrorBox('Welcome Back', `You arrived from: ${commandLine.pop()?.slice(0, -1)}`)
+  })
+
+  // Create mainWindow, load the rest of the app, etc...
+  app.whenReady().then(() => {
+    createWindow()
+  })
+
+  app.on('open-url', (event, url) => {
+    dialog.showErrorBox('Welcome Back', `You arrived from: ${url}`)
+  })
+}

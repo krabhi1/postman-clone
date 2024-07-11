@@ -10,13 +10,14 @@
     "moduleResolution": "Bundler",
     "module": "ESNext",
     "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noFallthroughCasesInSwitch": false,
     "composite": true,
     "jsx": "react-jsx",
     "baseUrl": ".",
+
     "paths": {
-      "@renderer/*": [
-        "src/renderer/src/*"
-      ]
+      "@renderer/*": ["src/renderer/src/*"]
     }
   }
 }
