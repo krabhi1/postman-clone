@@ -5,7 +5,7 @@ import React, {
   ReactNode,
   useEffect,
 } from "react";
-import TabItem, { TabPanelProps } from "./TabItem";
+import TabItem, { TabItemProps } from "./TabItem";
 import "../../styles/tab-list.css";
 import CloseIcon from "../../icons/CloseIcon";
 import { ReactChildren } from "../../others/utils";
@@ -25,8 +25,8 @@ export default function TabView({
   onTabClose,
 }: TabViewProps) {
   const tabs = Children.toArray(children).filter(
-    (e): e is ReactElement<TabPanelProps> => {
-      const child = e as ReactElement<TabPanelProps>;
+    (e): e is ReactElement<TabItemProps> => {
+      const child = e as ReactElement<TabItemProps>;
       const closable = child.props.closable || false;
 
       // for (const key of hiddenTabs) {

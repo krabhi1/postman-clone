@@ -5,12 +5,12 @@ export type TabPanelHeaderTemplateOptions = {
   isActive: boolean;
   index: number;
 };
-export type TabPanelProps = ReactChildren & {
+export type TabItemProps = ReactChildren & {
   header?: string;
   headerTemplate?: (options: TabPanelHeaderTemplateOptions) => React.ReactNode;
   closable?: boolean;
 };
-export default function TabItem(props: TabPanelProps) {
+export default function TabItem(props: TabItemProps) {
   
 
   return <>{props.children}</>;

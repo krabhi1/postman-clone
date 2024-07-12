@@ -2,8 +2,9 @@ import { HttpMethod, RequestItem } from "common-utils/types";
 import BreadCrumb from "../../BreadCrumb";
 import TabItem from "../../tab/TabItem";
 import TabView from "../../tab/TabView";
-import Table from "../../Table";
-
+import Table, { Column, RowData } from "../../Table";
+import { useState } from "react";
+import { useImmer } from "use-immer";
 type RequestPanelProps = {
   collectionId: string;
   request: RequestItem;
@@ -23,7 +24,12 @@ export function RequestPanel({
       {/*  BreadCrumb*/}
       <BreadCrumb path={path} />
       {/* input box */}
-      <RequestInputBox onUrlChange={props.onUrlChange} onMethodChange={props.onHttpMethodChange} method={request.method} url={request.url} />
+      <RequestInputBox
+        onUrlChange={props.onUrlChange}
+        onMethodChange={props.onHttpMethodChange}
+        method={request.method}
+        url={request.url}
+      />
       {/* request tab */}
       <RequestTab />
       {/* query tab */}
@@ -67,20 +73,49 @@ function RequestInputBox(props: RequestViewerProps) {
 }
 
 function RequestTab() {
+  const [data, setData] = useImmer<RowData[]>([
+    {
+      data: { key: "Content-Type", value: "application/json", description: "" },
+      isReadOnly: true,
+    },
+    {
+      data: { key: "Accept", value: "application/json", description: "" },
+      isReadOnly: true,
+    },
+    {
+      data: { key: "age", value: "20", description: "age of user" },
+      isReadOnly: false,
+    },
+  ]);
   return (
     <div className="req-tab">
       <TabView>
         <TabItem header="Params">
           <Table
-            headers={["Key", "Value", "Description"]}
-            tableData={[
-              ["name", "Nitesh", "This is the name of the user"],
-              ["age", "23", "This is the age of the user"],
-              ["age", "23", "This is the age of the user"],
-              ["age", "23", "This is the age of the user"],
-              ["age", "23", "This is the age of the user"],
-            ]}
-          />
+            onEdit={(i, k, v) => {
+              setData((draft) => {
+                draft[i].data[k] = v;
+              });
+              console.table(data);
+            }}
+            onDelete={(i) => {
+              setData((draft) => {
+                draft.splice(i, 1);
+              });
+            }}
+            onAdd={(k, v) => {
+              setData((draft) => {
+                draft.push({
+                  data: { key: "", value: "", description: "", [k]: v },
+                });
+              });
+            }}
+            data={data}
+          >
+            <Column header="Key" field="key" />
+            <Column header="Value" field="value" />
+            <Column header="Description" field="description" />
+          </Table>
         </TabItem>
         <TabItem header="Authorization">Authorization</TabItem>
         <TabItem header="Headers">Headers</TabItem>
