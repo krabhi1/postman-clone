@@ -5,6 +5,7 @@ import { RequestPanel } from "../panels/RequestPanel";
 import { ResponsePanel } from "../panels/ResponsePanel";
 import { useLiveStore } from "../../../configs/liveblocks.config";
 import { useShallow } from "zustand/react/shallow";
+import { useEffect } from "react";
 export type RequestViewerProps = {
   id: string;
   collectionId: string;
@@ -16,10 +17,11 @@ export default function RequestViewer({
   collectionId,
   method,
 }: RequestViewerProps) {
-  const { path, request } = useLiveStore(
+  const { path, request, updateItem, ...state } = useLiveStore(
     useShallow((state) => ({
       path: state.getItemPath(collectionId, id),
       request: state.getRequest(collectionId, id),
+      updateItem: state.updateItem,
     }))
   );
   if (!request) return "Request not found";
@@ -37,6 +39,12 @@ export default function RequestViewer({
           path={path}
           request={request}
           collectionId={collectionId}
+          onHttpMethodChange={(method) => {
+            updateItem(collectionId, { method }, id);
+          }}
+          onUrlChange={(url) => {
+            updateItem(collectionId, { url }, id);
+          }}
         />
         <ResponsePanel />
       </Split>

@@ -24,10 +24,6 @@ export default function TabView({
   renderEmpty,
   onTabClose,
 }: TabViewProps) {
-  useEffect(() => {
-    console.log("TabView mounted");
-  }, []);
-  // const [hiddenTabs, setHiddenTabs] = React.useState<(string | number)[]>([]);
   const tabs = Children.toArray(children).filter(
     (e): e is ReactElement<TabPanelProps> => {
       const child = e as ReactElement<TabPanelProps>;

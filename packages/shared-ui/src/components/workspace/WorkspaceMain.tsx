@@ -36,11 +36,6 @@ export default function WorkspaceMain() {
   const [leftSidebarIndex, setLeftSidebarIndex] = useState<
     number | undefined
   >();
-
-  useEffect(() => {
-    console.log("Main mounted");
-  }, []);
-
   return (
     <div className="main">
       {/* left sidebar */}

@@ -6,19 +6,24 @@ import Table from "../../Table";
 
 type RequestPanelProps = {
   collectionId: string;
-  request:RequestItem
-  path:string
+  request: RequestItem;
+  path: string;
   onHttpMethodChange?: (method: HttpMethod) => void;
+  onUrlChange?: (value: string) => void;
   onSendRequest?: () => void;
-}
-export function RequestPanel(props: RequestPanelProps) {
-
+};
+export function RequestPanel({
+  path,
+  collectionId,
+  request,
+  ...props
+}: RequestPanelProps) {
   return (
     <div className="req-panel">
       {/*  BreadCrumb*/}
-      <BreadCrumb path={props.path}/>
+      <BreadCrumb path={path} />
       {/* input box */}
-      <RequestInputBox />
+      <RequestInputBox onUrlChange={props.onUrlChange} onMethodChange={props.onHttpMethodChange} method={request.method} url={request.url} />
       {/* request tab */}
       <RequestTab />
       {/* query tab */}
@@ -26,11 +31,22 @@ export function RequestPanel(props: RequestPanelProps) {
   );
 }
 
-function RequestInputBox() {
+type RequestViewerProps = {
+  url: string;
+  method: HttpMethod;
+  onUrlChange?: (value: string) => void;
+  onMethodChange?: (method: HttpMethod) => void;
+};
+function RequestInputBox(props: RequestViewerProps) {
   return (
     <div className="input-box">
       <div className="input-area">
-        <select>
+        <select
+          value={props.method}
+          onChange={(e) =>
+            props?.onMethodChange?.(e.target.value as HttpMethod)
+          }
+        >
           <option value="GET">GET</option>
           <option value="POST">POST</option>
           <option value="PUT">PUT</option>
@@ -38,7 +54,12 @@ function RequestInputBox() {
           <option value="PATCH">PATCH</option>
         </select>
         <span></span>
-        <input type="text" placeholder="https://example.com" />
+        <input
+          value={props.url}
+          onChange={(e) => props?.onUrlChange?.(e.target.value)}
+          type="text"
+          placeholder="https://example.com"
+        />
       </div>
       <button className="btn primary">Send</button>
     </div>
@@ -48,8 +69,8 @@ function RequestInputBox() {
 function RequestTab() {
   return (
     <div className="req-tab">
-      <TabView >
-        <TabItem header="Params" >
+      <TabView>
+        <TabItem header="Params">
           <Table
             headers={["Key", "Value", "Description"]}
             tableData={[
