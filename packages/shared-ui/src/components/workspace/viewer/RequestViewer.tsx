@@ -5,7 +5,7 @@ import { RequestPanel } from "../panels/RequestPanel";
 import { ResponsePanel } from "../panels/ResponsePanel";
 import { useLiveStore } from "../../../configs/liveblocks.config";
 import { useShallow } from "zustand/react/shallow";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 export type RequestViewerProps = {
   id: string;
   collectionId: string;
@@ -24,11 +24,13 @@ export default function RequestViewer({
       updateItem: state.updateItem,
     }))
   );
+  const [sizes, setSizes] = useState([70, 30]);
   if (!request) return "Request not found";
   return (
     <div className="req-viewer">
       <Split
-        sizes={[70, 30]}
+        sizes={sizes}
+        onDragEnd={(sizes) => setSizes(sizes)}
         gutterSize={1}
         minSize={[100, 0]}
         snapOffset={[0, 100]}

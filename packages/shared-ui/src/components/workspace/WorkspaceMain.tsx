@@ -15,12 +15,14 @@ function Content({ index }: { index: number | undefined }) {
   useEffect(() => {
     console.log("Content2 mounted");
   }, []);
+  const [sizes, setSizes] = useState([30, 70]);
 
   if (index === undefined) return <PanelRight />;
 
   return (
     <Split
-      sizes={[30, 70]}
+      sizes={sizes}
+      onDragEnd={(sizes) => setSizes(sizes)}
       className="split"
       gutterSize={1}
       snapOffset={[150, 0]}
