@@ -2,7 +2,7 @@ import { findFalsyKeys } from "common-utils";
 // @ts-ignore
 export type Env = {
   GOOGLE_CLIENT_ID: string;
-  GOOGLE_REDIRECT_URI: string;
+  GOOGLE_REDIRECT_URL: string;
   SERVER_URL: string;
 };
 // export let  env = {
@@ -12,7 +12,7 @@ export type Env = {
 // };
 export let env: Env = {
   GOOGLE_CLIENT_ID: "",
-  GOOGLE_REDIRECT_URI: "",
+  GOOGLE_REDIRECT_URL: "",
   SERVER_URL: "",
 };
 
@@ -27,4 +27,3 @@ export function updateEnv(newEnv: typeof env) {
 //   );
 // }
 
-console.log({ env });
