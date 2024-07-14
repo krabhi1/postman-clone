@@ -89,54 +89,34 @@ function RequestTabView(
     </div>
   );
 }
-
 function ParamsTabItem({
   url,
   onUrlChange,
 }: Pick<RequestViewerProps, "url" | "onUrlChange">) {
   const lastUrlRef = useRef("");
   const [data, setData] = useImmer<RowData[]>([]);
-
-  // const params = useMemo(
-  //   () => data.map((row) => `${row.data.key}=${row.data.value}`).join("&"),
-  //   [data]
-  // );
-  // console.log({ params });
-
-  //url -> table ,block if url is changed by self
+  const isUpperUpdate = useRef(false);
   useEffect(() => {
     if (url === lastUrlRef.current) return;
     lastUrlRef.current = url;
     try {
       const urlObj = new URL(url);
       const keyValues = Array.from(urlObj.searchParams.entries());
+      isUpperUpdate.current = true;
       setData((draft) => {
-        let index = 0;
-        const items = draft.reduce((acc, row, i) => {
-          const [key, value] = keyValues[i] || [];
-          index = i;
-          //if new key
-          if (key && row.data.key !== key) {
-            acc.push({ data: { key, value, description: "" } });
-          } else if (key && row.data.key === key) {
-            //update row
-            if (row.data.value !== value) {
-              acc.push({ data: { key, value, description: "" } });
+        const items: RowData[] = [];
+        keyValues.forEach(([key, value], i) => {
+          const existingRow = draft.find((row) => row.data.key === key);
+          if (existingRow) {
+            if (existingRow.data.value !== value) {
+              items.push({ data: { key, value, description: "" } });
             } else {
-              acc.push(row);
+              items.push(existingRow);
             }
           } else {
-          }
-          return acc;
-        }, [] as RowData[]);
-
-        //if keyValues is greater than data
-        if (keyValues.length > draft.length) {
-          for (let i = index + 1; i < keyValues.length; i++) {
-            const [key, value] = keyValues[i];
             items.push({ data: { key, value, description: "" } });
           }
-        }
+        });
         return items;
       });
     } catch (error) {
@@ -144,24 +124,26 @@ function ParamsTabItem({
     }
   }, [url]);
 
-  //table -> url
-  function updateUrl() {
+  useEffect(() => {
+   //avoid call when data is changed by upper useEffect
+    if (isUpperUpdate.current) {
+      isUpperUpdate.current = false;
+      return;
+    }
     try {
       const params = data
         .map((row) => `${row.data.key}=${row.data.value}`)
         .join("&");
       const urlObj = new URL(url);
       urlObj.search = params;
-      //don't convert url to
-      const newUrl = decodeURIComponent(urlObj.toString());
-      console.log({ urlObj, newUrl });
+      const newUrl = urlObj.href;
       if (newUrl === url) return;
       lastUrlRef.current = newUrl;
       onUrlChange?.(newUrl);
     } catch (error) {
       console.error("invalid url", url);
     }
-  }
+  }, [data]);
 
   return (
     <Table
@@ -169,13 +151,11 @@ function ParamsTabItem({
         setData((draft) => {
           draft[i].data[k] = v;
         });
-        updateUrl();
       }}
       onDelete={(i) => {
         setData((draft) => {
           draft.splice(i, 1);
         });
-        updateUrl();
       }}
       onAdd={(k, v) => {
         setData((draft) => {
@@ -183,7 +163,6 @@ function ParamsTabItem({
             data: { key: "", value: "", description: "", [k]: v },
           });
         });
-        updateUrl();
       }}
       data={data}
     >
