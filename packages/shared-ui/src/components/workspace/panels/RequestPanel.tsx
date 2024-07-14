@@ -121,6 +121,8 @@ function ParamsTabItem({
       });
     } catch (error) {
       console.error("invalid url", url);
+      isUpperUpdate.current = true;
+      setData([]);
     }
   }, [url]);
 
