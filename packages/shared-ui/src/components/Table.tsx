@@ -4,39 +4,11 @@ import "../styles/table.css";
 import { KeyValue } from "common-utils";
 import CloseIcon from "../icons/CloseIcon";
 
-// type TableProps = {
-//   headers: string[];
-//   tableData: string[][];
-// };
-// export default function Table({ headers, tableData }: TableProps) {
-//   return (
-//     <table className="table">
-//       <thead>
-//         <tr>
-//           {headers.map((header, index) => (
-//             <th key={index}>{header}</th>
-//           ))}
-//         </tr>
-//       </thead>
-//       <tbody>
-//         {tableData.map((row, index) => (
-//           <tr key={index}>
-//             {row.map((cellValue, index) => (
-//               <td key={index}>
-//                 <input value={cellValue} onChange={(e) => {}} />
-//               </td>
-//             ))}
-//           </tr>
-//         ))}
-//       </tbody>
-//     </table>
-//   );
-// }
 export type RowData = {
   data: KeyValue<any>;
   isReadOnly?: boolean;
 };
-type Table2Props = React.PropsWithChildren<{
+type TableProps = React.PropsWithChildren<{
   data: RowData[];
   onEdit?: (rowIndex: number, key: string, value: any) => void;
   onDelete?: (rowIndex: number) => void;
@@ -48,7 +20,7 @@ export default function Table({
   onEdit,
   onDelete,
   onAdd,
-}: Table2Props) {
+}: TableProps) {
   const items = Children.toArray(children).filter(
     (e): e is ReactElement<ColumnProps> => {
       const child = e as ReactElement<ColumnProps>;
@@ -67,7 +39,6 @@ export default function Table({
   }
   const headers = items.map((item) => item.props.header);
   const keys = items.map((item) => item.props.field);
-  console.log(lastRowRef.current);
   return (
     <table className="table">
       <thead>
