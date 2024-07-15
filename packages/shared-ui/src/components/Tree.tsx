@@ -110,7 +110,7 @@ function RenderTreeNode<T>({ node, ...props }: RenderTreeNodeProps<T>) {
   return (
     <div className="node">
       <div
-        className={`node-head ${props.activeNodeId === node.id ? "active" : ""}`}
+        className={`node-head ${isActive ? "active" : ""}`}
         style={{ paddingLeft: `${props.times * 2 + 1}rem` }}
         onClick={() => {
           props.onNodeClick?.(node);

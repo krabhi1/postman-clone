@@ -89,6 +89,8 @@ type Action = {
   //env
   addEnvironment: (name: string) => void;
   getEnvById: (id: string) => Environment | undefined;
+  deleteEnv: (id: string) => void;
+  duplicateEnv: (id: string) => void;
 };
 
 type Presence = {
@@ -458,6 +460,32 @@ export const useLiveStore = create<WithLiveblocks<State & Action, Presence>>()(
           return get().workspaceState?.environments.find(
             (env) => env.id === id
           );
+        },
+        deleteEnv(id) {
+          set((state) => {
+            if (state.workspaceState) {
+              state.workspaceState.environments = state.workspaceState?.environments.filter(
+                (env) => env.id !== id
+              );
+            }
+          });
+        },
+        duplicateEnv(id) {
+          set((state) => {
+            if (state.workspaceState) {
+              const env = state.workspaceState.environments.find(
+                (env) => env.id === id
+              );
+              if (env) {
+                state.workspaceState.environments.push({
+                  ...env,
+                  id: nanoid(),
+                  name: env.name + " clone",
+                  createdAt: Date.now(),
+                });
+              }
+            }
+          });
         },
       }),
       {

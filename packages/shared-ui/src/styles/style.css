@@ -141,11 +141,13 @@ button.btn.secondary {
 }
 
 .gutter {
-  background-color: rgb(49, 163, 255);
+  /* background-color: rgb(49, 163, 255, 0.5); */
   background-repeat: no-repeat;
   background-position: 50%;
   z-index: 9999;
   position: relative;
+  padding: 1px;
+  border-right: 1px solid rgb(49, 163, 255);
 }
 
 .gutter.gutter-horizontal {
@@ -155,4 +157,27 @@ button.btn.secondary {
 .gutter.gutter-vertical {
   background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAFAQMAAABo7865AAAABlBMVEVHcEzMzMzyAv2sAAAAAXRSTlMAQObYZgAAABBJREFUeF5jOAMEEAIEEFwAn3kMwcB6I2AAAAAASUVORK5CYII=");
   cursor: row-resize;
+}
+
+input.in {
+  padding: 0.5em 1em;
+  border: #ccc 1px solid;
+  display: block;
+  width: 100%;
+  outline: none;
+}
+
+input.in:focus {
+  outline: 1px solid var(--color-primary);
+}
+
+span.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+}
+span.icon:hover {
+  background-color: #ddd;
+  border-radius: 5px;
 }
