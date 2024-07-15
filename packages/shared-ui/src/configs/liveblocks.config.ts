@@ -13,10 +13,12 @@ import {
   Collection,
   CollectionItem,
   Environment,
+  EnvironmentVariable,
   FolderItem,
   RequestItem,
   Workspace,
 } from "common-utils/types";
+import { PartialWithOmit } from "common-utils";
 
 const client = createClient({
   authEndpoint: async (room) => {
@@ -91,6 +93,14 @@ type Action = {
   getEnvById: (id: string) => Environment | undefined;
   deleteEnv: (id: string) => void;
   duplicateEnv: (id: string) => void;
+  //variable
+  addVariable: (envId: string, key: string, value: string) => void;
+  deleteVariable: (envId: string, id: string) => void;
+  updateVariable: (
+    envId: string,
+    id: string,
+    update: PartialWithOmit<EnvironmentVariable, 'id'>
+  ) => void;
 };
 
 type Presence = {
@@ -484,6 +494,42 @@ export const useLiveStore = create<WithLiveblocks<State & Action, Presence>>()(
                   createdAt: Date.now(),
                 });
               }
+            }
+          });
+        },
+        //variables
+        addVariable(envId, key, value) {
+          set((state) => {
+            const env = state.workspaceState?.environments.find(
+              (env) => env.id === envId
+            );
+            if (env) {
+              env.variables.push({ id: nanoid(), key, value });
+            }
+          });
+        },
+        deleteVariable(envId, id) {
+          set((state) => {
+            const env = state.workspaceState?.environments.find(
+              (env) => env.id === envId
+            );
+            if (env) {
+              env.variables = env.variables.filter((v) => v.id !== id);
+            }
+          });
+        },
+        updateVariable(envId, id, { ...update }) {
+          set((state) => {
+            const env = state.workspaceState?.environments.find(
+              (env) => env.id === envId
+            );
+            if (env) {
+              env.variables = env.variables.map((v) => {
+                if (v.id === id) {
+                  return { ...v, ...update };
+                }
+                return v;
+              });
             }
           });
         },

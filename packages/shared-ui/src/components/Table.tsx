@@ -37,13 +37,16 @@ export default function Table({
       child.querySelector("input")?.focus();
     }
   }
-  const headers = items.map((item) => item.props.header);
-  const keys = items.map((item) => item.props.field);
+  const itemProps = items.map((item) => ({
+    key: item.props.field,
+    canAdd: item.props.canAdd == undefined ? true : item.props.canAdd,
+    header: item.props.header,
+  }));
   return (
     <table className="table">
       <thead>
         <tr>
-          {headers.map((header, index) => (
+          {itemProps.map(({ header }, index) => (
             <th key={index + header}>{header}</th>
           ))}
         </tr>
@@ -79,24 +82,28 @@ export default function Table({
               );
             })}
           </tr>
-          // for new ro
         ))}
+        {/* add new row */}
         <tr>
-          {keys.map((key, index) => (
-            <td key={index}>
-              <input
-                placeholder={key}
-                type="text"
-                onKeyDown={(e) => {
-                  e.preventDefault();
-                  onAdd?.(key, e.key);
-                  //lost focus
-                  (e.target as HTMLElement).blur();
-                  setTimeout(() => focusLastRowInput(index));
-                }}
-              />
-            </td>
-          ))}
+          {itemProps.map(({ key, canAdd }, index) => {
+            return (
+              <td key={index}>
+                <input
+                  disabled={!canAdd}
+                  placeholder={key}
+                  type="text"
+                  onKeyDown={(e) => {
+                    e.preventDefault();
+
+                    onAdd?.(key, e.key);
+                    //lost focus
+                    (e.target as HTMLElement).blur();
+                    setTimeout(() => focusLastRowInput(index));
+                  }}
+                />
+              </td>
+            );
+          })}
         </tr>
       </tbody>
     </table>
@@ -106,6 +113,7 @@ export default function Table({
 type ColumnProps = {
   field: string;
   header: string;
+  canAdd?: boolean;
 };
 export function Column(props: ColumnProps) {
   return <></>;

@@ -68,3 +68,9 @@
   font-weight: 600;
   font-size: var(--avg-font);
 }
+
+
+/* env viewer */
+.env-view{
+  padding: 8px;
+}
