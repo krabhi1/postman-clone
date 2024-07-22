@@ -1,4 +1,10 @@
-import { HttpMethod, RequestItem } from "common-utils/types";
+import {
+  Body,
+  Collection,
+  CollectionItem,
+  HttpMethod,
+  RequestItem,
+} from "common-utils/types";
 import BreadCrumb from "../../BreadCrumb";
 import TabItem from "../../tab/TabItem";
 import TabView from "../../tab/TabView";
@@ -16,6 +22,7 @@ type RequestPanelProps = {
   onHttpMethodChange?: (method: HttpMethod) => void;
   onUrlChange?: (value: string) => void;
   onSendRequest?: () => void;
+  updateRequestItem: (item: Partial<RequestItem>) => void;
 };
 export function RequestPanel({
   path,
@@ -33,9 +40,14 @@ export function RequestPanel({
         onHttpMethodChange={props.onHttpMethodChange}
         collectionId={collectionId}
         request={request}
+        updateRequestItem={props.updateRequestItem}
       />
       {/* request tab */}
-      <RequestTabView request={request} onUrlChange={props.onUrlChange} />
+      <RequestTabView
+        request={request}
+        onUrlChange={props.onUrlChange}
+        updateRequestItem={props.updateRequestItem}
+      />
       {/* query tab */}
     </div>
   );
@@ -73,7 +85,10 @@ function RequestInputBox(props: RequestViewerProps) {
 }
 
 function RequestTabView(
-  props: Pick<RequestViewerProps, "onUrlChange" | "request">
+  props: Pick<
+    RequestViewerProps,
+    "onUrlChange" | "request" | "updateRequestItem"
+  >
 ) {
   return (
     <div className="req-tab">
@@ -87,7 +102,12 @@ function RequestTabView(
         <TabItem header="Authorization">Authorization</TabItem>
         <TabItem header="Headers">Headers</TabItem>
         <TabItem header="Body">
-          <BodyTabItem />
+          <BodyTabItem
+            body={props.request.body}
+            onBodyChange={(body) => {
+              props.updateRequestItem({ body });
+            }}
+          />
         </TabItem>
       </TabView>
     </div>
@@ -183,10 +203,13 @@ function ParamsTabItem(
   );
 }
 
-type BodyTabItemProps = {};
+type BodyTabItemProps = {
+  body: Body;
+  onBodyChange?: (body: Body) => void;
+};
 const options = ["none", "form-data", "x-www-form-urlencoded", "raw", "binary"];
 const rawOptions = ["text", "json", "javascript", "html", "xml"];
-function BodyTabItem() {
+function BodyTabItem(props: BodyTabItemProps) {
   const [activeRawOption, setActiveRawOption] = useState(rawOptions[0]);
   const [activeOptionIndex, setActiveOptionIndex] = useState(0);
   const activeOption = options[activeOptionIndex];
@@ -206,11 +229,56 @@ function BodyTabItem() {
           <Dropdown
             items={rawOptions}
             activeItem={activeRawOption}
-            onItemSelect={setActiveRawOption}
+            onItemSelect={setActiveRawOption} //TODO update headers
           />
         )}
       </div>
       {/* content */}
+      <BodyTabItemContent
+        body={props.body}
+        onBodyChange={props.onBodyChange}
+        option={activeOption}
+        rawOption={activeRawOption}
+      />
     </div>
+  );
+}
+type BodyTabItemContentProps = {
+  body: Body;
+  onBodyChange?: (body: Body) => void;
+  option: string;
+  rawOption: string;
+};
+function BodyTabItemContent(props: BodyTabItemContentProps) {
+  if (props.option === "none") {
+    return <div></div>;
+  }
+  if (props.option === "form-data") {
+    return <div></div>;
+  }
+  if (props.option === "x-www-form-urlencoded") {
+    return <div></div>;
+  }
+  if (props.option === "raw") {
+    return <RawBodyContent {...props} />;
+  }
+
+  return <div></div>;
+}
+
+function RawBodyContent(props: BodyTabItemContentProps) {
+  const {
+    body: { data, type },
+    onBodyChange,
+    rawOption,
+    option,
+  } = props;
+  return (
+    <textarea
+      onChange={(e) => {
+        onBodyChange?.({ data: e.target.value, type });
+      }}
+      value={data}
+    />
   );
 }

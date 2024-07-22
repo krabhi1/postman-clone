@@ -51,7 +51,7 @@ export type CollectionBaseItem = Item & {
 };
 export type HttpMethod = "GET" | "POST" | "PUT" | "DELETE";
 export type Body = {
-  type: "raw" | "form-data" | "urlencoded" | "file";
+  type: "none" | "form-data" | "x-www-form-urlencoded" | "raw" | "binary";
   data: any;
 };
 export type RequestItem = CollectionBaseItem & {

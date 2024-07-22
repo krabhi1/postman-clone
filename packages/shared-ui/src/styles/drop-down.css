@@ -8,7 +8,9 @@
 }
 .dropdown > .dropdown-button {
   padding: 4px;
-  border: 1px solid var(--color-border);
+  font-weight: bold;
+  color: royalblue;
+  /* border: 1px solid var(--color-border); */
 }
 
 .dropdown > .dropdown-content {

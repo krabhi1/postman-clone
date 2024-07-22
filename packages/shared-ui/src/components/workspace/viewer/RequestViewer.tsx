@@ -17,13 +17,19 @@ export default function RequestViewer({
   collectionId,
   method,
 }: RequestViewerProps) {
-  const { path, request, updateItem, ...state } = useLiveStore(
-    useShallow((state) => ({
-      path: state.getItemPath(collectionId, id),
-      request: state.getRequest(collectionId, id),
-      updateItem: state.updateItem,
-    }))
-  );
+  const { path, request, updateItem, updateRequestItem, ...state } =
+    useLiveStore(
+      useShallow((state) => ({
+        path: state.getItemPath(collectionId, id),
+        request: state.getRequest(collectionId, id),
+        updateRequestItem: (item: Partial<RequestItem>) => {
+          console.log("updateRequestItem", item, id);
+          state.updateItem(collectionId, item, id);
+        },
+        updateItem: state.updateItem,
+      }))
+    );
+
   const [sizes, setSizes] = useState([70, 30]);
   if (!request) return "Request not found";
   return (
@@ -47,6 +53,7 @@ export default function RequestViewer({
           onUrlChange={(url) => {
             updateItem(collectionId, { url }, id);
           }}
+          updateRequestItem={updateRequestItem}
         />
         <ResponsePanel />
       </Split>
