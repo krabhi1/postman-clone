@@ -1,7 +1,8 @@
 import { createBrowserRouter } from "react-router-dom";
 import { updateEnv } from "../configs/env.config";
 import { setRouter, routes } from "./pageRouter";
-import { memo } from "react";
+import { Children, memo, ReactElement, ReactNode } from "react";
+import React from "react";
 
 export function loadViteEnv() {
   let _env = {
@@ -10,7 +11,7 @@ export function loadViteEnv() {
     SERVER_URL: import.meta.env.VITE_SERVER_URL as string,
   };
   updateEnv(_env);
-console.log({ _env });
+  console.log({ _env });
 
 }
 
@@ -25,3 +26,14 @@ export type ReactChildren = {
 
 export const genericMemo: <T>(component: T) => T = memo;
 
+
+export function reactChildren<T>(props: {
+  children: ReactNode,
+  filter?: (child: ReactElement<T>) => boolean
+}) {
+  return Children.toArray(props.children).filter(
+    (e): e is ReactElement<T> => {
+      return React.isValidElement(e) && (!props.filter || props.filter(e as ReactElement<T>));
+    }
+  ) as ReactElement<T>[];
+}

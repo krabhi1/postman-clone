@@ -1,9 +1,11 @@
 import { RouterProvider } from "react-router-dom";
 import { router } from "./others/pageRouter";
 import "./styles/style.css";
+import { RadioGroupExample } from "./components/RadioGroup";
 
 export default function App() {
-  return <RouterProvider router={router} />;
+  // return <RouterProvider router={router} />;
+  return <RadioGroupExample/>
 }
 
 // import List from "./components/List";
