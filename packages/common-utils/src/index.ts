@@ -50,6 +50,9 @@ export type PartialWithOmit<T, K extends keyof T> = Partial<Omit<T, K>>;
 export type PartialWithMust<T, K extends keyof T> = Partial<T> &
   Required<Pick<T, K>>;
 
+export type Omit2<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
+
+
 export type Result<T> = {
   data?: T;
   error?: any;
@@ -71,7 +74,7 @@ export function makeErrorResult<T>(result?: Partial<Result<T>>): Result<T> {
   };
 }
 
-export function makeResultFrom<T>(result: Result<T>, other: Result<any>) {}
+export function makeResultFrom<T>(result: Result<T>, other: Result<any>) { }
 
 export function isOk(request: Result<any>) {
   return request.status >= 200 && request.status < 300;

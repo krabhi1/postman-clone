@@ -69,6 +69,17 @@
   font-size: var(--avg-font);
 }
 
+.req-panel .body-tab-item{
+  display: flex;
+  flex-direction: column;
+
+}
+.req-panel .body-tab-item > .header{
+  display: flex;
+  height: 2.5em;
+  align-items: center;
+}
+
 
 /* env viewer */
 .env-view{

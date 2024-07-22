@@ -5,7 +5,10 @@ import TabView from "../../tab/TabView";
 import Table, { Column, RowData } from "../../Table";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useImmer } from "use-immer";
-import { PartialWithMust } from "common-utils";
+import { Omit2, PartialWithMust } from "common-utils";
+import RadioGroup, { RadioItem } from "../../RadioGroup";
+import { Menu } from "../../Menu";
+import Dropdown from "../../Dropdown";
 type RequestPanelProps = {
   collectionId: string;
   request: RequestItem;
@@ -27,31 +30,27 @@ export function RequestPanel({
       {/* input box */}
       <RequestInputBox
         onUrlChange={props.onUrlChange}
-        onMethodChange={props.onHttpMethodChange}
-        method={request.method}
-        url={request.url}
+        onHttpMethodChange={props.onHttpMethodChange}
+        collectionId={collectionId}
+        request={request}
       />
       {/* request tab */}
-      <RequestTabView url={request.url} onUrlChange={props.onUrlChange} />
+      <RequestTabView request={request} onUrlChange={props.onUrlChange} />
       {/* query tab */}
     </div>
   );
 }
 
-type RequestViewerProps = {
-  url: string;
-  method: HttpMethod;
-  onUrlChange?: (value: string) => void;
-  onMethodChange?: (method: HttpMethod) => void;
-};
+type RequestViewerProps = Omit2<RequestPanelProps, "path" | "onSendRequest">;
 function RequestInputBox(props: RequestViewerProps) {
+  const { method, url } = props.request;
   return (
     <div className="input-box">
       <div className="input-area">
         <select
-          value={props.method}
+          value={method}
           onChange={(e) =>
-            props?.onMethodChange?.(e.target.value as HttpMethod)
+            props?.onHttpMethodChange?.(e.target.value as HttpMethod)
           }
         >
           <option value="GET">GET</option>
@@ -62,7 +61,7 @@ function RequestInputBox(props: RequestViewerProps) {
         </select>
         <span></span>
         <input
-          value={props.url}
+          value={url}
           onChange={(e) => props?.onUrlChange?.(e.target.value)}
           type="text"
           placeholder="https://example.com"
@@ -74,25 +73,34 @@ function RequestInputBox(props: RequestViewerProps) {
 }
 
 function RequestTabView(
-  props: Pick<RequestViewerProps, "url" | "onUrlChange">
+  props: Pick<RequestViewerProps, "onUrlChange" | "request">
 ) {
   return (
     <div className="req-tab">
       <TabView>
         <TabItem header="Params">
-          <ParamsTabItem url={props.url} onUrlChange={props.onUrlChange} />
+          <ParamsTabItem
+            request={props.request}
+            onUrlChange={props.onUrlChange}
+          />
         </TabItem>
         <TabItem header="Authorization">Authorization</TabItem>
         <TabItem header="Headers">Headers</TabItem>
-        <TabItem header="Body">Body</TabItem>
+        <TabItem header="Body">
+          <BodyTabItem />
+        </TabItem>
       </TabView>
     </div>
   );
 }
-function ParamsTabItem({
-  url,
-  onUrlChange,
-}: Pick<RequestViewerProps, "url" | "onUrlChange">) {
+function ParamsTabItem(
+  props: Pick<RequestViewerProps, "request" | "onUrlChange">
+) {
+  const {
+    request: { url },
+    onUrlChange,
+  } = props;
+
   const lastUrlRef = useRef("");
   const [data, setData] = useImmer<RowData[]>([]);
   const isUpperUpdate = useRef(false);
@@ -127,7 +135,7 @@ function ParamsTabItem({
   }, [url]);
 
   useEffect(() => {
-   //avoid call when data is changed by upper useEffect
+    //avoid call when data is changed by upper useEffect
     if (isUpperUpdate.current) {
       isUpperUpdate.current = false;
       return;
@@ -169,8 +177,40 @@ function ParamsTabItem({
       data={data}
     >
       <Column header="Key" field="key" />
-      <Column header="Value" field="value" />
-      <Column header="Description" field="description" />
+      <Column canAdd={false} header="Value" field="value" />
+      <Column canAdd={false} header="Description" field="description" />
     </Table>
+  );
+}
+
+type BodyTabItemProps = {};
+const options = ["none", "form-data", "x-www-form-urlencoded", "raw", "binary"];
+const rawOptions = ["text", "json", "javascript", "html", "xml"];
+function BodyTabItem() {
+  const [activeRawOption, setActiveRawOption] = useState(rawOptions[0]);
+  const [activeOptionIndex, setActiveOptionIndex] = useState(0);
+  const activeOption = options[activeOptionIndex];
+  return (
+    <div className="body-tab-item">
+      {/* header */}
+      <div className="header">
+        <RadioGroup
+          activeIndex={activeOptionIndex}
+          onChange={(i) => setActiveOptionIndex(i)}
+        >
+          {options.map((option) => (
+            <RadioItem key={option} value={option} />
+          ))}
+        </RadioGroup>
+        {activeOption === "raw" && (
+          <Dropdown
+            items={rawOptions}
+            activeItem={activeRawOption}
+            onItemSelect={setActiveRawOption}
+          />
+        )}
+      </div>
+      {/* content */}
+    </div>
   );
 }

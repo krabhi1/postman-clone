@@ -140,7 +140,7 @@ button.btn.secondary {
   /* min-height: 100px; */
 }
 
-.gutter {
+.split .gutter {
   /* background-color: rgb(49, 163, 255, 0.5); */
   background-repeat: no-repeat;
   background-position: 50%;
@@ -150,12 +150,22 @@ button.btn.secondary {
   border-right: 1px solid rgb(49, 163, 255);
 }
 
+.split-h .gutter {
+  /* background-color: rgb(49, 163, 255, 0.5); */
+  background-repeat: no-repeat;
+  background-position: 50%;
+  z-index: 9999;
+  position: relative;
+  padding: 1px;
+  border-top: 1px solid rgb(49, 163, 255);
+}
+
 .gutter.gutter-horizontal {
   /* background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg=='); */
   cursor: col-resize;
 }
 .gutter.gutter-vertical {
-  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAFAQMAAABo7865AAAABlBMVEVHcEzMzMzyAv2sAAAAAXRSTlMAQObYZgAAABBJREFUeF5jOAMEEAIEEFwAn3kMwcB6I2AAAAAASUVORK5CYII=");
+  /* background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAFAQMAAABo7865AAAABlBMVEVHcEzMzMzyAv2sAAAAAXRSTlMAQObYZgAAABBJREFUeF5jOAMEEAIEEFwAn3kMwcB6I2AAAAAASUVORK5CYII="); */
   cursor: row-resize;
 }
 

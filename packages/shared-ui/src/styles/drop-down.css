@@ -1,0 +1,33 @@
+@import "./style.css";
+.dropdown {
+  position: relative;
+  display: inline-block;
+  width: fit-content;
+  height: fit-content;
+  padding: 4px;
+}
+.dropdown > .dropdown-button {
+  padding: 4px;
+  border: 1px solid var(--color-border);
+}
+
+.dropdown > .dropdown-content {
+  position: absolute;
+  max-width: 200px;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border) !important;
+  padding: 4px;
+  min-width: 100px;
+  border-radius: var(--border-radius);
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+
+.dropdown > .dropdown-content > div {
+  padding: 0.2em 1em;
+  border-radius: var(--border-radius);
+}
+
+.dropdown > .dropdown-content > div:hover {
+  background-color: var(--color-primary);
+  color: var(--color-on-primary);
+}
