@@ -54,8 +54,8 @@ export type CollectionBaseItem = Item & {
 export type HttpMethod = "GET" | "POST" | "PUT" | "DELETE";
 export type Body = {
   active: "none" | "form-data" | "x-www-form-urlencoded" | "raw" | "binary";
-  formData: KeyValue<string>
-  xWwwFormUrlencoded: KeyValue<string>
+  formData: KeyValue<string>[]
+  xWwwFormUrlencoded: KeyValue<string>[]
   raw: {
     type: "text" | "json" | "xml" | "html" | "javascript"
     text: string;

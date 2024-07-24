@@ -11,6 +11,12 @@ export type RowData = {
 type TableProps = React.PropsWithChildren<{
   data: RowData[];
   onEdit?: (rowIndex: number, key: string, value: any) => void;
+  onEdit2?: (
+    rowIndex: number,
+    keyName: string,
+    value: any,
+    row: RowData
+  ) => void;
   onDelete?: (rowIndex: number) => void;
   onAdd?: (key: string, value: any) => void;
 }>;
@@ -18,6 +24,7 @@ export default function Table({
   data,
   children,
   onEdit,
+  onEdit2,
   onDelete,
   onAdd,
 }: TableProps) {
@@ -64,6 +71,7 @@ export default function Table({
                     value={row.data[key]}
                     onChange={(e) => {
                       onEdit?.(i, key, e.target.value);
+                      onEdit2?.(i, key, e.target.value, row);
                     }}
                   />
                   {!isReadOnly && keys.length - 1 === index && (

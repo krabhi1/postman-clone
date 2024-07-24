@@ -211,12 +211,12 @@ export const useLiveStore = create<WithLiveblocks<State & Action, Presence>>()(
               method: "GET",
               body: {
                 active: 'none',
-                formData: {},
+                formData: [],
                 raw: {
                   text: '',
                   type: 'text'
                 },
-                xWwwFormUrlencoded: {}
+                xWwwFormUrlencoded: []
               },
               headers: {},
             };
