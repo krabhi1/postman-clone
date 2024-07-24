@@ -6,15 +6,7 @@ import { ServerWorkspace, User, WorkspaceGroup } from "common-utils/types";
 import { KeyValue } from "common-utils";
 import { useShallow } from "zustand/react/shallow";
 import { WithImmer } from "../others/types";
-export type FolderLocal = {
-  isOpen: boolean;
-  some?: string;
-};
-export type CollectionLocal = {
-  isOpen: boolean;
-  some: string;
-};
-export type Local = FolderLocal | CollectionLocal;
+
 export type EditorTabItemState = {
   id: string;
   name: string;
@@ -26,10 +18,16 @@ export type LocalState = {
   // isAuth: boolean;
   profile?: User;
   workspaceGroup?: WorkspaceGroup;
-  local: KeyValue<Local>;
+  // local: KeyValue<ItemLocal>; //generally for collection and items state
   //editor open tabs state
   editorTabs: EditorTabItemState[];
   editorActiveTabId?: string;
+
+  //some local key value state
+  local: KeyValue<any>;
+
+
+
 };
 
 export type LocalAction = {
@@ -39,13 +37,16 @@ export type LocalAction = {
   addWorkspace: (workspace: ServerWorkspace) => void;
   deleteWorkspace: (workspaceId: string) => void;
   fetchWorkspaces: () => Promise<void>;
-  updateLocal: (key: string, value: Partial<Local>) => void;
-  getLocal: <T extends Local>(key: string) => T;
+  // updateItemLocal: (key: string, value: Partial<ItemLocal>) => void;
+  // getItemLocal: <T extends ItemLocal>(key: string) => T | undefined;
   //editor actions
   addEditorTab: (tab: EditorTabItemState) => void;
   removeEditorTab: (tabId: string) => void;
   setActiveEditorTab: (tabId: string) => void;
   addEditorTabAndSetAsActive: (tab: EditorTabItemState) => void;
+
+  getLocal: <T=any>(key: string) => T | undefined;
+  setLocal: (key: string, value: any) => void;
 };
 function isEditorTabExists(tabId: string) {
   return useLocalStore.getState().editorTabs.some((t) => t.id === tabId);
@@ -92,17 +93,6 @@ export const useLocalStore: UseBoundStore<
         });
       });
     },
-    updateLocal: (key: string, value: Partial<Local>) => {
-      set((state) => {
-        state.local[key] = { ...state.local[key], ...value };
-      });
-    },
-    getLocal: <T extends Local>(key: string) => {
-      if (!useLocalStore.getState().local[key]) {
-        useLocalStore.getState().updateLocal(key, { isOpen: true } as T);
-      }
-      return useLocalStore.getState().local[key] as T;
-    },
     addEditorTab: (tab: EditorTabItemState) => {
       set((state) => {
         if (isEditorTabExists(tab.id)) {
@@ -134,24 +124,46 @@ export const useLocalStore: UseBoundStore<
         state.editorActiveTabId = tab.id;
       });
     },
+
+    getLocal: <T>(key: string) => {
+      return useLocalStore.getState().local[key] as T;
+    },
+    setLocal: (key: string, value: any) => {
+      set((state) => {
+        state.local[key] = value;
+      });
+    },
   }))
 );
-export type LocalType = "folder" | "collection";
+//@ts-ignore
+window._useLocalStore = useLocalStore;
+// export type ItemLocalType = "folder" | "collection";
 
-export function useLocalState<T extends Local>(key: string, type: LocalType) {
-  //if no state then create one
-  if (!useLocalStore.getState().local[key]) {
-    if (type === "folder") {
-      useLocalStore
-        .getState()
-        .updateLocal(key, { isOpen: true } as FolderLocal);
-    } else if (type === "collection") {
-      useLocalStore
-        .getState()
-        .updateLocal(key, { isOpen: true } as CollectionLocal);
-    }
+// export function useItemLocalState<T extends ItemLocal>(key: string, type: ItemLocalType) {
+//   //if no state then create one
+//   if (!useLocalStore.getState().local[key]) {
+//     if (type === "folder") {
+//       useLocalStore
+//         .getState()
+//         .updateItemLocal(key, { isOpen: true } as FolderLocal);
+//     } else if (type === "collection") {
+//       useLocalStore
+//         .getState()
+//         .updateItemLocal(key, { isOpen: true } as CollectionLocal);
+//     }
+//   }
+//   return useLocalStore(useShallow((state) => state.local[key])) as T;
+// }
+
+
+export function useLocalState<T>(key: string, defaultVal?: T) {
+  let isNew = false
+  if (useLocalStore.getState().local[key] == undefined || useLocalStore.getState().local[key] == null) {
+    useLocalStore.getState().setLocal(key, defaultVal);
+    isNew = true
   }
-  return useLocalStore(useShallow((state) => state.local[key])) as T;
+  return useLocalStore(useShallow((state) => [state.local[key] as T, (value: T) => state.setLocal(key, value), isNew] as [T, (value: T) => void, boolean]));
+
 }
 
 async function safeFetch(callback: () => void) {

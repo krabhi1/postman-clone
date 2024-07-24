@@ -2,7 +2,6 @@ import { sleep } from "common-utils";
 import { ServerWorkspace } from "common-utils/types";
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import WorkspaceView from "../components/WorkspaceView";
 import { useLiveStore } from "../configs/liveblocks.config";
 import { router } from "../others/pageRouter";
 import { useLocalStore } from "../store/app.store";
@@ -22,8 +21,9 @@ function Load({
   } = useLiveStore();
 
   const { roomId } = workspace;
-
+  
   useEffect(() => {
+    console.log("roomId", roomId);
     enterRoom(roomId);
 
     return () => {

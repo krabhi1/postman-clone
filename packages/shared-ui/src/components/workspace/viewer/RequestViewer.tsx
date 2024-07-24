@@ -1,4 +1,4 @@
-import { HttpMethod, RequestItem } from "common-utils/types";
+import { FolderItem, HttpMethod, RequestItem } from "common-utils/types";
 import Split from "react-split";
 import "@styles/viewer.css";
 import { RequestPanel } from "@components/workspace/panels/request/RequestPanel";
@@ -7,9 +7,12 @@ import { useLiveStore } from "@configs/liveblocks.config";
 import { useShallow } from "zustand/react/shallow";
 import { useEffect, useState } from "react";
 import React from "react";
+import { WritableDraft } from "immer";
 
 type RequestContextType = {
-  updateRequestItem: (item: Partial<RequestItem>) => void;
+  updateRequestItem: (
+    callback: (item: WritableDraft<RequestItem>) => void
+  ) => void;
 };
 const RequestContext = React.createContext<RequestContextType | null>(null);
 
@@ -37,9 +40,10 @@ export default function RequestViewer({
       useShallow((state) => ({
         path: state.getItemPath(collectionId, id),
         request: state.getRequest(collectionId, id),
-        updateRequestItem: (item: Partial<RequestItem>) => {
-          console.log("updateRequestItem", item, id);
-          state.updateItem(collectionId, item, id);
+        updateRequestItem: (
+          callback: (item: WritableDraft<RequestItem>) => void
+        ) => {
+          state.updateItem2(collectionId, callback as any, id);
         },
         updateItem: state.updateItem,
       }))

@@ -18,8 +18,6 @@ export type CollNode = Node<{
   collectionId: string;
 }>;
 export default function CollectionsSidebarItem() {
-  const [activeNodeId, setActiveNodeId] = useState<string>();
-
   const {
     collections = [],
     addCollection,
@@ -37,17 +35,16 @@ export default function CollectionsSidebarItem() {
       duplicateItem: state.duplicateItem,
     }))
   );
-  const { local, updateLocal, getLocal, addAndOpen } = useLocalStore(
+  const { addAndOpen, setLocal, getLocal, local } = useLocalStore(
     useShallow((state) => ({
-      local: state.local,
-      updateLocal: state.updateLocal,
-      getLocal: state.getLocal,
       addAndOpen: state.addEditorTabAndSetAsActive,
+      setLocal: state.setLocal,
+      getLocal: state.getLocal,
+      local: state.local,
     }))
   );
 
   const data = useMemo<CollNode[]>(() => {
-    console.log("recall data");
     return collections.map((coll) => {
       const toNode = (items: CollectionItem[]) => {
         return items.map((item) => {
@@ -60,24 +57,30 @@ export default function CollectionsSidebarItem() {
             subtype = (item as RequestItem).method;
           }
           const type = item.type.toUpperCase() as CollNodeType;
+          const localState = getLocal<{ isOpen: boolean }>(item.id) || {
+            isOpen: true,
+          };
           return {
             id: item.id,
             children: children,
             data: { type, subtype, collectionId: coll.id },
             name: item.name,
-            isOpen: getLocal(item.id).isOpen,
+            isOpen: localState.isOpen,
           } as CollNode;
         }) as CollNode[];
+      };
+      const localState = getLocal<{ isOpen: boolean }>(coll.id) || {
+        isOpen: true,
       };
       return {
         id: coll.id,
         children: toNode(coll.items),
         data: { type: "COLLECTION", collectionId: coll.id },
         name: coll.name,
-        isOpen: getLocal(coll.id).isOpen,
+        isOpen: localState.isOpen,
       };
     });
-  }, [local, collections]);
+  }, [collections, local]);
 
   function handleOptionMenuSelect(node: CollNode, option: string) {
     const collectionId =
@@ -129,23 +132,27 @@ export default function CollectionsSidebarItem() {
       data: { subtype, collectionId },
     });
   }
+
+  function handleToggle(node: CollNode) {
+    setLocal(node.id, { isOpen: !node.isOpen });
+  }
+  function handleNodeClick(node: CollNode) {
+    setActiveNodeId(node.id);
+    openNode(node);
+  }
+  function handleAddCollection() {
+    addCollection("New Collection " + collections.length);
+  }
+  const [activeNodeId, setActiveNodeId] = useState<string>();
+
   return (
     <div className="coll-panel">
-      <button
-        onClick={() => addCollection("New Collection " + collections.length)}
-      >
-        New Collection
-      </button>
+      <button onClick={handleAddCollection}>New Collection</button>
       <Tree
         nodes={data}
         activeNodeId={activeNodeId}
-        onNodeClick={(node) => {
-          setActiveNodeId(node.id);
-          openNode(node);
-        }}
-        onToggle={(node) => {
-          updateLocal(node.id, { isOpen: !node.isOpen });
-        }}
+        onNodeClick={handleNodeClick}
+        onToggle={handleToggle}
         optionMenuListCallback={(node) => {
           let type = node.data.type;
           const common = ["open", "delete", "duplicate", "rename"];

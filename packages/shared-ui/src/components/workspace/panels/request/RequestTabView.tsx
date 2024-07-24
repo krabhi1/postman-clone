@@ -5,7 +5,6 @@ import { RequestPanelProps } from "./RequestPanel";
 import { BodyTabItem } from "./tabs/body/BodyTabItem";
 import { ParamsTabItem } from "./tabs/ParamsTabItem";
 
-
 export function RequestTabView(
   props: Pick<RequestPanelProps, "request" | "onUrlChange">
 ) {
@@ -22,7 +21,7 @@ export function RequestTabView(
         <TabItem header="Authorization">Authorization</TabItem>
         <TabItem header="Headers">Headers</TabItem>
         <TabItem header="Body">
-          <BodyTabItem body={props.request.body} />
+          <BodyTabItem reqId={props.request.id} body={props.request.body} />
         </TabItem>
       </TabView>
     </div>

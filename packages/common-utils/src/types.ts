@@ -1,3 +1,5 @@
+import { KeyValue } from ".";
+
 export type User = {
   id: string;
   email: string;
@@ -51,8 +53,15 @@ export type CollectionBaseItem = Item & {
 };
 export type HttpMethod = "GET" | "POST" | "PUT" | "DELETE";
 export type Body = {
-  type: "none" | "form-data" | "x-www-form-urlencoded" | "raw" | "binary";
-  data: any;
+  active: "none" | "form-data" | "x-www-form-urlencoded" | "raw" | "binary";
+  formData: KeyValue<string>
+  xWwwFormUrlencoded: KeyValue<string>
+  raw: {
+    type: "text" | "json" | "xml" | "html" | "javascript"
+    text: string;
+  };
+
+
 };
 export type RequestItem = CollectionBaseItem & {
   url: string;

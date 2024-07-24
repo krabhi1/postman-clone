@@ -19,6 +19,7 @@ import {
   Workspace,
 } from "common-utils/types";
 import { PartialWithOmit } from "common-utils";
+import { WritableDraft } from "immer";
 
 const client = createClient({
   authEndpoint: async (room) => {
@@ -78,6 +79,11 @@ type Action = {
   updateItem: (
     collectionId: string,
     item: Partial<CollectionItem | Collection>,
+    itemId?: string
+  ) => void;
+  updateItem2: (
+    collectionId: string,
+    updateCallback: (item: WritableDraft<CollectionItem | Collection>) => void,
     itemId?: string
   ) => void;
   duplicateItem: (collectionId: string, itemId?: string) => void;
@@ -204,8 +210,13 @@ export const useLiveStore = create<WithLiveblocks<State & Action, Presence>>()(
               url: "http://localhost:3000",
               method: "GET",
               body: {
-                type: "raw",
-                data: "",
+                active: 'none',
+                formData: {},
+                raw: {
+                  text: '',
+                  type: 'text'
+                },
+                xWwwFormUrlencoded: {}
               },
               headers: {},
             };
@@ -278,6 +289,41 @@ export const useLiveStore = create<WithLiveblocks<State & Action, Presence>>()(
                   for (let i = 0; i < items.length; i++) {
                     if (items[i].id === itemId) {
                       items[i] = { ...items[i], ...item };
+                      return;
+                    }
+                    if (items[i].type === "folder") {
+                      _updateItem((items[i] as FolderItem).items);
+                    }
+                  }
+                };
+                _updateItem(collection.items);
+              }
+            }
+          });
+        },
+        updateItem2(collectionId, updateCallback, itemId) {
+          set((state) => {
+            if (!itemId && state.workspaceState) {
+              state.workspaceState.collections = state.workspaceState.collections.map(
+                (collection) => {
+                  if (collection.id === collectionId) {
+                    updateCallback(collection);
+                  }
+                  return collection;
+                }
+              );
+              return;
+            }
+
+            if (state.workspaceState) {
+              const collection = state.workspaceState.collections.find(
+                (collection) => collection.id === collectionId
+              );
+              if (collection) {
+                const _updateItem = (items: CollectionItem[]) => {
+                  for (let i = 0; i < items.length; i++) {
+                    if (items[i].id === itemId) {
+                      updateCallback(items[i]);
                       return;
                     }
                     if (items[i].type === "folder") {
@@ -542,6 +588,9 @@ export const useLiveStore = create<WithLiveblocks<State & Action, Presence>>()(
     )
   )
 );
+
+// @ts-ignore
+window._useLiveStore = useLiveStore;
 
 // export function useLiveData(selector?: (state: State) => Action & State){
 //   const { workspaceState: ws, ...others } = useLiveStore();

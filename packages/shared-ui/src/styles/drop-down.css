@@ -5,6 +5,7 @@
   width: fit-content;
   height: fit-content;
   padding: 4px;
+  z-index: 1000;
 }
 .dropdown > .dropdown-button {
   padding: 4px;

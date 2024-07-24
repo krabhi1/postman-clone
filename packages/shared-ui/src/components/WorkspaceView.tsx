@@ -10,11 +10,7 @@ import React, { useEffect } from "react";
 import { useShallow } from "zustand/react/shallow";
 import { addSharedUser } from "../api/sharedUsers.api";
 import { useLiveStore } from "../configs/liveblocks.config";
-import {
-  FolderLocal,
-  useLocalStore,
-  useLocalState,
-} from "../store/app.store";
+import { useLocalState } from "../store/app.store";
 
 const FolderItemView = React.memo(
   ({ item, collectionId }: { item: FolderItem; collectionId: string }) => {
@@ -26,8 +22,11 @@ const FolderItemView = React.memo(
       }))
     );
 
-    const localState = useLocalState<FolderLocal>(item.id, "folder");
-    
+    // const localState = useItemLocalState<FolderLocal>(item.id, "folder");
+    const [localState, setLocalState] = useLocalState(item.id, {
+      isOpen: true,
+    });
+
     return (
       <div className="box list folder">
         <div className="title-2">Folder({item.name})</div>
@@ -52,9 +51,7 @@ const FolderItemView = React.memo(
           </button>
           <button
             onClick={() => {
-              useLocalStore
-                .getState()
-                .updateLocal(item.id, { isOpen: !localState.isOpen});
+              setLocalState({ isOpen: !localState.isOpen });
             }}
           >
             Toggle
@@ -255,11 +252,7 @@ const CollectionListView = React.memo(
   }
 );
 
-export default function WorkspaceView({
-  isShared,
-}: {
-  isShared: boolean;
-}) {
+export default function WorkspaceView({ isShared }: { isShared: boolean }) {
   const { workspace, addNewCollection, clearCollections } = useLiveStore(
     (state) => ({
       workspace: state.workspaceState,
@@ -284,7 +277,7 @@ export default function WorkspaceView({
       alert("Error," + result.message);
     }
   }
-  console.log("collectins",workspace.collections)
+  console.log("collectins", workspace.collections);
 
   return (
     <div className="box list">
