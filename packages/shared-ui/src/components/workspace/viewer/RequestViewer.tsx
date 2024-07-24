@@ -1,9 +1,9 @@
 import { HttpMethod, RequestItem } from "common-utils/types";
 import Split from "react-split";
-import "../../../styles/viewer.css";
-import { RequestPanel } from "../panels/request/RequestPanel";
-import { ResponsePanel } from "../panels/ResponsePanel";
-import { useLiveStore } from "../../../configs/liveblocks.config";
+import "@styles/viewer.css";
+import { RequestPanel } from "@components/workspace/panels/request/RequestPanel";
+import { ResponsePanel } from "@components/workspace/panels/ResponsePanel";
+import { useLiveStore } from "@configs/liveblocks.config";
 import { useShallow } from "zustand/react/shallow";
 import { useEffect, useState } from "react";
 import React from "react";

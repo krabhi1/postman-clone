@@ -1,9 +1,8 @@
 import { useState } from "react";
-import Dropdown from "../../../../../Dropdown";
-import RadioGroup, { RadioItem } from "../../../../../RadioGroup";
-import {} from "../../RequestPanel";
 import { Body } from "common-utils/types";
 import Raw from "./items/Raw";
+import Dropdown from "@components/Dropdown";
+import RadioGroup, { RadioItem } from "@components/RadioGroup";
 
 const options = ["none", "form-data", "x-www-form-urlencoded", "raw", "binary"];
 const rawOptions = ["text", "json", "javascript", "html", "xml"];

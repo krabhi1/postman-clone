@@ -1,10 +1,10 @@
-import TabView from "../../tab/TabView";
-import TabItem from "../../tab/TabItem";
+import TabItem from "@components/tab/TabItem";
+import TabView from "@components/tab/TabView";
+import { useLocalStore, EditorTabItemState } from "@store/app.store";
 import { useShallow } from "zustand/react/shallow";
-import { EditorTabItemState, useLocalStore } from "../../../store/app.store";
 import { EnvViewer } from "../viewer/EnvViewer";
 import RequestViewer from "../viewer/RequestViewer";
-import { useEffect } from "react";
+
 
 export function PanelRight() {
   const { activeTabId, tabs, removeTab } = useLocalStore(

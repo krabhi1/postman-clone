@@ -1,7 +1,8 @@
+import Table, { RowData, Column } from "@components/Table";
+import { useLiveStore } from "@configs/liveblocks.config";
+import { useMemo } from "react";
 import { useShallow } from "zustand/react/shallow";
-import { useLiveStore } from "../../../configs/liveblocks.config";
-import Table, { Column, RowData } from "../../Table";
-import { useMemo, useState } from "react";
+
 export type EnvViewerProps = {
   id: string;
   isGlobal?: boolean;

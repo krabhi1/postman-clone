@@ -1,14 +1,9 @@
 import {
-  Body,
-  Collection,
   CollectionItem,
   HttpMethod,
   RequestItem,
 } from "common-utils/types";
-import BreadCrumb from "../../../BreadCrumb";
-import { useMemo } from "react";
-import { Omit2, PartialWithMust } from "common-utils";
-import { Menu } from "../../../Menu";
+import BreadCrumb from "@components/BreadCrumb";
 import { RequestInputBox } from "./RequestInputBox";
 import { RequestTabView } from "./RequestTabView";
 export type RequestPanelProps = {
@@ -37,12 +32,8 @@ export function RequestPanel({
         request={request}
       />
       {/* request tab */}
-      <RequestTabView
-        request={request}
-        onUrlChange={props.onUrlChange}
-      />
+      <RequestTabView request={request} onUrlChange={props.onUrlChange} />
       {/* query tab */}
     </div>
   );
 }
-

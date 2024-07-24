@@ -1,6 +1,6 @@
+import Table, { RowData, Column } from "@components/Table";
 import { useRef, useEffect } from "react";
 import { useImmer } from "use-immer";
-import Table, { RowData, Column } from "../../../../Table";
 import { RequestPanelProps } from "../RequestPanel";
 
 export function ParamsTabItem(

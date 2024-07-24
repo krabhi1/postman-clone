@@ -1,9 +1,10 @@
-import TabItem from "../../../tab/TabItem";
-import TabView from "../../../tab/TabView";
-import { useRequestContext } from "../../viewer/RequestViewer";
+import TabItem from "@components/tab/TabItem";
+import TabView from "@components/tab/TabView";
+import { useRequestContext } from "@components/workspace/viewer/RequestViewer";
 import { RequestPanelProps } from "./RequestPanel";
 import { BodyTabItem } from "./tabs/body/BodyTabItem";
 import { ParamsTabItem } from "./tabs/ParamsTabItem";
+
 
 export function RequestTabView(
   props: Pick<RequestPanelProps, "request" | "onUrlChange">

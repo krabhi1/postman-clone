@@ -1,14 +1,21 @@
 import { HttpMethod } from "common-utils/types";
-import { RequestViewerProps } from "./RequestPanel";
+import { RequestPanelProps } from "./RequestPanel";
 
-export function RequestInputBox(props: RequestViewerProps) {
+export function RequestInputBox(
+  props: Pick<
+    RequestPanelProps,
+    "request" | "onHttpMethodChange" | "onUrlChange" | "collectionId"
+  >
+) {
   const { method, url } = props.request;
   return (
     <div className="input-box">
       <div className="input-area">
         <select
           value={method}
-          onChange={(e) => props?.onHttpMethodChange?.(e.target.value as HttpMethod)}
+          onChange={(e) =>
+            props?.onHttpMethodChange?.(e.target.value as HttpMethod)
+          }
         >
           <option value="GET">GET</option>
           <option value="POST">POST</option>
@@ -21,7 +28,8 @@ export function RequestInputBox(props: RequestViewerProps) {
           value={url}
           onChange={(e) => props?.onUrlChange?.(e.target.value)}
           type="text"
-          placeholder="https://example.com" />
+          placeholder="https://example.com"
+        />
       </div>
       <button className="btn primary">Send</button>
     </div>
