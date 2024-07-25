@@ -4,7 +4,7 @@ import { RequestPanelProps } from "./RequestPanel";
 export function RequestInputBox(
   props: Pick<
     RequestPanelProps,
-    "request" | "onHttpMethodChange" | "onUrlChange" | "collectionId"
+    "request" | "onHttpMethodChange" | "onUrlChange" | "collectionId"|'onSendRequest'
   >
 ) {
   const { method, url } = props.request;
@@ -31,7 +31,7 @@ export function RequestInputBox(
           placeholder="https://example.com"
         />
       </div>
-      <button className="btn primary">Send</button>
+      <button className="btn primary" onClick={props.onSendRequest}>Send</button>
     </div>
   );
 }

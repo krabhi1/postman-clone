@@ -1,8 +1,4 @@
-import {
-  CollectionItem,
-  HttpMethod,
-  RequestItem,
-} from "common-utils/types";
+import { CollectionItem, HttpMethod, RequestItem } from "common-utils/types";
 import BreadCrumb from "@components/BreadCrumb";
 import { RequestInputBox } from "./RequestInputBox";
 import { RequestTabView } from "./RequestTabView";
@@ -13,6 +9,7 @@ export type RequestPanelProps = {
   onHttpMethodChange?: (method: HttpMethod) => void;
   onUrlChange?: (value: string) => void;
   onSendRequest?: () => void;
+  isLoading: boolean;
 };
 export function RequestPanel({
   path,
@@ -30,6 +27,7 @@ export function RequestPanel({
         onHttpMethodChange={props.onHttpMethodChange}
         collectionId={collectionId}
         request={request}
+        onSendRequest={props.onSendRequest}
       />
       {/* request tab */}
       <RequestTabView request={request} onUrlChange={props.onUrlChange} />

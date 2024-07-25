@@ -8,20 +8,19 @@
   overflow: hidden;
 }
 
-.req-panel{
+.req-panel {
   overflow: hidden;
   display: flex;
   flex-direction: column;
 }
-.req-tab{
+.req-tab {
   flex: 1;
   overflow: auto;
-  margin:  1rem ;
+  margin: 1rem;
   margin-top: 0;
-
 }
 
-.req-panel .input-box{
+.req-panel .input-box {
   display: grid;
   grid-template-columns: auto max-content;
   gap: 0.5rem;
@@ -29,11 +28,9 @@
   /* margin-bottom: 0.5rem; */
   margin: 1rem;
   margin-top: 0;
-
-
 }
 
-.req-panel .input-box .input-area{
+.req-panel .input-box .input-area {
   display: flex;
   align-items: center;
   gap: 1rem;
@@ -41,7 +38,7 @@
   border-radius: var(--border-radius);
 }
 
-.req-panel .input-box .input-area span{
+.req-panel .input-box .input-area span {
   display: block;
   height: 24px;
   width: 1px;
@@ -49,7 +46,7 @@
 }
 
 .req-panel .input-box .input-area input,
-.req-panel .input-box .input-area select{
+.req-panel .input-box .input-area select {
   padding: 0.5rem;
   border: none;
   outline: none;
@@ -58,38 +55,59 @@
   padding: 0 1em;
 }
 
-.req-panel .input-box .input-area input{
+.req-panel .input-box .input-area input {
   width: 100%;
 }
 
-.req-panel .input-box button{
+.req-panel .input-box button {
   height: 40px;
   padding: 0 1.5em !important;
   font-weight: 600;
   font-size: var(--avg-font);
 }
 
-.req-panel .body-tab-item{
+.req-panel .body-tab-item {
   display: flex;
   flex-direction: column;
   width: 100%;
   height: 100%;
-
 }
-.req-panel .body-tab-item > .header{
+.req-panel .body-tab-item > .header {
   display: flex;
   height: 2.5em;
   align-items: center;
 }
-.req-panel .body-tab-item textarea{
+.req-panel .body-tab-item textarea {
   flex: 1;
   resize: none;
   border: solid #ccc 1px;
   outline: none;
-} 
+}
 
+/* response panel */
+.res-panel {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+.res-panel .header {
+  position: absolute;
+  right: 6px;
+  display: flex;
+  padding: 6px;
+  align-items: center;
+  gap: 6px;
+}
+
+.res-panel .content {
+  flex: 1;
+  padding: 1rem;
+  overflow: auto;
+}
 
 /* env viewer */
-.env-view{
+.env-view {
   padding: 8px;
 }
