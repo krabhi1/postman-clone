@@ -4,6 +4,7 @@ import { setRouter, routes } from "./pageRouter";
 import { Children, memo, ReactElement, ReactNode, useRef, useState } from "react";
 import React from "react";
 import { RequestItem } from "common-utils/types";
+import { KeyValue } from "common-utils";
 
 export function loadViteEnv() {
   let _env = {
@@ -52,12 +53,13 @@ export function fetchRequestItem(request: RequestItem) {
   //fetch and can be cancelled
   const controller = new AbortController();
   const signal = controller.signal;
-  const response = fetch(request.url, {
-    method: request.method,
-    signal,
-    headers: request.headers,
-    body: makeBody()
-  })
+  // const response = fetch(request.url, {
+  //   method: request.method,
+  //   signal,
+  //   headers: request.headers,
+  //   body: makeBody()
+  // })
+  const response = serverFetch(request.url, request.method, request.headers, makeBody(), signal);
 
   return { controller, response };
 
@@ -65,7 +67,7 @@ export function fetchRequestItem(request: RequestItem) {
 
 export function useRequestFetch() {
   const [isLoading, setIsLoading] = useState(false);
-  const [resInfo, setResInfo] = useState<{ contentType?: string, data: any, size: number }>();
+  const [resInfo, setResInfo] = useState<{ contentType?: string, data: any, size: number, headers: any }>();
   const [error, setError] = useState<string>();
   const infoRef = useRef<{
     controller: AbortController;
@@ -88,13 +90,16 @@ export function useRequestFetch() {
       const isTextBased = isTextBasedContentType(contentType || '');
       const blob = await res.blob();
 
+      console.log('headers', Array.from(headers.entries()));
+
+
       if (isTextBased) {
         const text = await blob.text();
-        setResInfo({ contentType, data: text, size: blob.size });
+        setResInfo({ contentType, data: text, size: blob.size, headers });
       }
       else {
         const buffer = await blob.arrayBuffer();
-        setResInfo({ contentType, data: buffer, size: blob.size });
+        setResInfo({ contentType, data: buffer, size: blob.size, headers });
       }
     }).catch((e) => {
       setError(e + '');
@@ -117,7 +122,46 @@ export function isTextBasedContentType(contentType?: string) {
   return ['json', 'text', 'xml', 'html'].some(type => contentType.includes(type));
 }
 
+export function objToKeyValuesString(obj: Record<string, string>) {
+  return Object.keys(obj).map(key => `${key}=${obj[key]}`).join(',')
+}
 
+
+export function serverFetch(
+  url: string,
+  method: string,
+  headers: Record<string, string>,
+  body: any,
+  signal:any
+) {
+  const serverUrl = "http://localhost:3000/api/v1/fetch";
+
+  const pmc_headers = objToKeyValuesString(headers);
+  const pmc_others = objToKeyValuesString({ method });
+  const pmc_url = url;
+  return fetch(serverUrl, {
+    method: "POST",
+    signal,
+    headers: {
+      pmc_headers,
+      pmc_others,
+      pmc_url,
+    },
+    body: body,
+  });
+}
+
+export function keyValuesToObject(keyValues?: string) {
+  //key values is like keyValues='a=2,b=3,...'
+  if (!keyValues) return {}
+  const obj: Record<string, string> = {}
+  const parts = keyValues.split(',')
+  parts.forEach(part => {
+      const [key, value] = part.split('=')
+      obj[key.trim()] = value.trim()
+  })
+  return obj
+}
 
 
 //for react 

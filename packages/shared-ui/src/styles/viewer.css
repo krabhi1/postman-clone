@@ -92,7 +92,7 @@
   position: relative;
 }
 
-.res-panel .header {
+.res-panel .header > div {
   position: absolute;
   right: 6px;
   display: flex;

@@ -88,7 +88,7 @@ export function makeResultFrom<T>(args: {
     else if (args.code) {
         result.code = args.code
         result.message = args.message || ResultCode[args.code]
-        
+
     }
     return result
 }
@@ -100,7 +100,7 @@ export function makeResultFrom<T>(args: {
 export type KeyValue<T> = Record<string | symbol | number, T>
 
 export type Falsy = "null" | "undefined" | "0" | "" | "false"
-export function findFalsyKeys(obj: KeyValue<any>, falsy: Falsy[] = ["null", "undefined"]) {
+export function findFalsyKeys(obj: KeyValue<any>, falsy: Falsy[] = ["null", "undefined",'']) {
     return Object.keys(obj).filter(key => {
         const value = obj[key]
         let valueType: string = typeof value
@@ -139,4 +139,43 @@ export function randomId() {
 //check value is null or undefined
 export function isNullOrUndefined(value: any) {
     return value === null || value === undefined
+}
+
+
+export function contentTypeToType(contentType?: string) {
+    //output can be none form-data raw binary form-url-encoded
+    if (isTextBasedContentType(contentType)) {
+        return "raw"
+    }
+    if (contentType?.includes("form-data")) {
+        return "form-data"
+    }
+    if (contentType?.includes("x-www-form-urlencoded")) {
+        return "form-url-encoded"
+    }
+    if (contentType?.includes("octet-stream")) {
+        return "binary"
+    }
+    return "none"
+}
+
+export function isTextBasedContentType(contentType?: string) {
+    if (!contentType) return false;
+    return ['json', 'text', 'xml', 'html'].some(type => contentType.includes(type));
+}
+
+export function keyValuesToObject(keyValues?: string) {
+    //key values is like keyValues='a=2,b=3,...'
+    if (!keyValues) return {}
+    const obj: Record<string, string> = {}
+    const parts = keyValues.split(',')
+    parts.forEach(part => {
+        const [key, value] = part.split('=')
+        obj[key.trim()] = value.trim()
+    })
+    return obj
+}
+
+export function objToKeyValuesString(obj: Record<string, string>) {
+    return Object.keys(obj).map(key => `${key}=${obj[key]}`).join(',')
 }

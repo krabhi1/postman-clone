@@ -7,11 +7,13 @@ import workspaceRouter from "../routes/workspace.route.js";
 import { auth } from "../others/routes.utils.js";
 import liveblocksRouter from "../routes/liveblocks.route.js";
 import sharedUsersRouter from "../routes/sharedUsers.route.js";
+import fetchRouter from "../routes/fetch.route.js";
 const app: Express = express();
 
 app.use(cors({}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.raw({type: 'application/octet-stream',limit: '10mb'}))
 
 app.use((res, req, next) => {
     console.log("-------------------")
@@ -33,6 +35,7 @@ app.use("/api/v1/user",userRouter)
 app.use("/api/v1/workspace",auth,workspaceRouter)
 app.use("/api/v1/workspace",auth,sharedUsersRouter)
 app.use("/api/v1/liveblocks",auth,liveblocksRouter)
+app.use("/api/v1/fetch",fetchRouter)
 
 
 app.use((req, res,next) => {

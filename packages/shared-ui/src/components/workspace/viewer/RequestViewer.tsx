@@ -84,12 +84,26 @@ export default function RequestViewer({
             onSendRequest={handleSendRequest}
           />
           <ResponsePanel
-            isError={!reqFetch.error}
+            isError={reqFetch.error !== undefined}
             isLoading={reqFetch.isLoading}
             contentType={reqFetch.data?.contentType}
-            data={!reqFetch.error ? reqFetch.data?.data : reqFetch.error}
+            data={reqFetch.data?.data}
+            errorMessage={reqFetch.error}
             size={reqFetch.data?.size || 0}
             onClear={reqFetch.clear}
+            headers={{
+              "content-type": "application/json",
+              "content-length": "100",
+              date: "Wed, 17 Nov 2021 07:00:00 GMT",
+              server: "express",
+              "x-powered-by": "nodejs",
+              connection: "close",
+              "access-control-allow-origin": "*",
+              "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+              "access-control-allow-headers": "Content-Type, Authorization",
+              "access-control-allow-credentials": "true",
+              vary: "Origin, Accept-Encoding",
+            }}
           />
         </Split>
       </div>
