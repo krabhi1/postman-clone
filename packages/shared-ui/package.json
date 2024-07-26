@@ -22,6 +22,7 @@
     "common-utils": "workspace:^",
     "immer": "^10.1.1",
     "nanoid": "^5.0.7",
+    "parse-headers": "^2.0.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.23.1",

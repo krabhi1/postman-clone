@@ -5,7 +5,7 @@ import { Children, memo, ReactElement, ReactNode, useRef, useState } from "react
 import React from "react";
 import { RequestItem } from "common-utils/types";
 import { KeyValue } from "common-utils";
-
+import parseHeaders from "parse-headers";
 export function loadViteEnv() {
   let _env = {
     GOOGLE_CLIENT_ID: import.meta.env.VITE_GOOGLE_CLIENT_ID as string,
@@ -88,18 +88,18 @@ export function useRequestFetch() {
       //if headers is any text 
       const contentType = headers.get('content-type') || undefined;
       const isTextBased = isTextBasedContentType(contentType || '');
-      const blob = await res.blob();
-
-      console.log('headers', Array.from(headers.entries()));
-
+      const pmc_headers = parseHeaders(headers.get('pmc_headers') || '')
+      const { size: sizeStr, status, statusCode } = parseHeaders(headers.get('pmc_others') || '') as KeyValue<string>
+      const size = sizeStr ? parseInt(sizeStr) : 0
 
       if (isTextBased) {
-        const text = await blob.text();
-        setResInfo({ contentType, data: text, size: blob.size, headers });
+        const text = await res.text();
+        setResInfo({ contentType, data: text, size, headers });
       }
       else {
-        const buffer = await blob.arrayBuffer();
-        setResInfo({ contentType, data: buffer, size: blob.size, headers });
+        const buffer = await res.arrayBuffer();
+        // const data= new Uint8Array(buffer)
+        setResInfo({ contentType, data: 'some binary data', size, headers: pmc_headers });
       }
     }).catch((e) => {
       setError(e + '');
@@ -132,7 +132,7 @@ export function serverFetch(
   method: string,
   headers: Record<string, string>,
   body: any,
-  signal:any
+  signal: any
 ) {
   const serverUrl = "http://localhost:3000/api/v1/fetch";
 
@@ -151,17 +151,7 @@ export function serverFetch(
   });
 }
 
-export function keyValuesToObject(keyValues?: string) {
-  //key values is like keyValues='a=2,b=3,...'
-  if (!keyValues) return {}
-  const obj: Record<string, string> = {}
-  const parts = keyValues.split(',')
-  parts.forEach(part => {
-      const [key, value] = part.split('=')
-      obj[key.trim()] = value.trim()
-  })
-  return obj
-}
+
 
 
 //for react 

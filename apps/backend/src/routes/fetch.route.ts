@@ -1,7 +1,6 @@
 import { Router } from "express";
-import { RequestQuery } from "../others/apicall.utils.js";
-import { contentTypeToType, findFalsyKeys, keyValuesToObject, makeResult, objToKeyValuesString } from "../others/utils.js";
-
+import { findFalsyKeys, objToKeyValuesString } from "../others/utils.js";
+import parseHeaders from "parse-headers";
 
 const fetchRouter: Router = Router();
 
@@ -28,15 +27,15 @@ fetchRouter.post("/", async (req, res) => {
     const pmc_url = req.headers['pmc_url'] as string || ''
     const pmc_others = req.headers['pmc_others'] as string || ''
 
-    const falseKeys = findFalsyKeys({  pmc_url, pmc_others })
+    const falseKeys = findFalsyKeys({ pmc_url, pmc_others })
     if (falseKeys.length > 0) {
         res.status(400).send(`${falseKeys.join(',')} headers is required`)
         return
     }
 
 
-    const headers = keyValuesToObject(pmc_headers)
-    const { method } = keyValuesToObject(pmc_others)
+    const headers = parseHeaders(pmc_headers) as Record<string, string>
+    const { method } = parseHeaders(pmc_others) as Record<string, string>
 
     try {
         const response = await fetch(pmc_url, {
@@ -67,7 +66,8 @@ fetchRouter.post("/", async (req, res) => {
             const text = await blob.text();
             res.send(text)
         } catch (error) {
-            const buffer = await blob.arrayBuffer();
+            const array = await blob.arrayBuffer();
+            const buffer = Buffer.from(array)
             res.send(buffer)
         }
 

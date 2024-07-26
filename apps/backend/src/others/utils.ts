@@ -164,17 +164,6 @@ export function isTextBasedContentType(contentType?: string) {
     return ['json', 'text', 'xml', 'html'].some(type => contentType.includes(type));
 }
 
-export function keyValuesToObject(keyValues?: string) {
-    //key values is like keyValues='a=2,b=3,...'
-    if (!keyValues) return {}
-    const obj: Record<string, string> = {}
-    const parts = keyValues.split(',')
-    parts.forEach(part => {
-        const [key, value] = part.split('=')
-        obj[key.trim()] = value.trim()
-    })
-    return obj
-}
 
 export function objToKeyValuesString(obj: Record<string, string>) {
     return Object.keys(obj).map(key => `${key}=${obj[key]}`).join(',')
