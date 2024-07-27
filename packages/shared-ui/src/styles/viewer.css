@@ -92,9 +92,13 @@
   position: relative;
 }
 
-.res-panel .header > div {
+.res-panel .header{
+  padding: 4px;
+}
+.res-panel .header > .tools {
   position: absolute;
   right: 6px;
+  top:2px;
   display: flex;
   padding: 6px;
   align-items: center;
@@ -104,6 +108,7 @@
 .res-panel .content {
   flex: 1;
   padding: 1rem;
+  overflow: auto;
 }
 .res-panel .content textarea{
   width: 100%;

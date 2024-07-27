@@ -5,7 +5,6 @@ import { Children, memo, ReactElement, ReactNode, useRef, useState } from "react
 import React from "react";
 import { RequestItem } from "common-utils/types";
 import { KeyValue } from "common-utils";
-import parseHeaders from "parse-headers";
 export function loadViteEnv() {
   let _env = {
     GOOGLE_CLIENT_ID: import.meta.env.VITE_GOOGLE_CLIENT_ID as string,
@@ -67,7 +66,7 @@ export function fetchRequestItem(request: RequestItem) {
 
 export function useRequestFetch() {
   const [isLoading, setIsLoading] = useState(false);
-  const [resInfo, setResInfo] = useState<{ contentType?: string, data: any, size: number, headers: any }>();
+  const [resInfo, setResInfo] = useState<{ contentType?: string, data: any, size: number, headers: Record<string, string>, status: string, statusCode: string }>();
   const [error, setError] = useState<string>();
   const infoRef = useRef<{
     controller: AbortController;
@@ -91,15 +90,17 @@ export function useRequestFetch() {
       const pmc_headers = parseHeaders(headers.get('pmc_headers') || '')
       const { size: sizeStr, status, statusCode } = parseHeaders(headers.get('pmc_others') || '') as KeyValue<string>
       const size = sizeStr ? parseInt(sizeStr) : 0
+      console.log(pmc_headers)
+      console.log({ contentType, isTextBased, size, status, statusCode })
 
       if (isTextBased) {
         const text = await res.text();
-        setResInfo({ contentType, data: text, size, headers });
+        setResInfo({ contentType, data: text, size, headers: pmc_headers, status, statusCode });
       }
       else {
         const buffer = await res.arrayBuffer();
         // const data= new Uint8Array(buffer)
-        setResInfo({ contentType, data: 'some binary data', size, headers: pmc_headers });
+        setResInfo({ contentType, data: 'some binary data', size, headers: pmc_headers, status, statusCode });
       }
     }).catch((e) => {
       setError(e + '');
@@ -126,6 +127,18 @@ export function objToKeyValuesString(obj: Record<string, string>) {
   return Object.keys(obj).map(key => `${key}=${obj[key]}`).join(',')
 }
 
+export function buildHeadersString(headers: Record<string, string>) {
+  return JSON.stringify(Object.keys(headers).map(key => [key, headers[key]]))
+}
+
+
+export function parseHeaders(str: string) {
+  const obj = JSON.parse(str) as [string, string][]
+  return obj.reduce((acc, [key, value]) => {
+    acc[key] = value
+    return acc
+  }, {} as Record<string, string>)
+}
 
 export function serverFetch(
   url: string,
@@ -136,8 +149,8 @@ export function serverFetch(
 ) {
   const serverUrl = "http://localhost:3000/api/v1/fetch";
 
-  const pmc_headers = objToKeyValuesString(headers);
-  const pmc_others = objToKeyValuesString({ method });
+  const pmc_headers = buildHeadersString(headers);
+  const pmc_others = buildHeadersString({ method });
   const pmc_url = url;
   return fetch(serverUrl, {
     method: "POST",

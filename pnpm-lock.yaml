@@ -38,9 +38,6 @@ importers:
       nanoid:
         specifier: ^5.0.7
         version: 5.0.7
-      parse-headers:
-        specifier: ^2.0.5
-        version: 2.0.5
     devDependencies:
       '@faker-js/faker':
         specifier: ^8.4.1
@@ -257,9 +254,6 @@ importers:
       nanoid:
         specifier: ^5.0.7
         version: 5.0.7
-      parse-headers:
-        specifier: ^2.0.5
-        version: 2.0.5
       react:
         specifier: ^18.2.0
         version: 18.3.1
@@ -3412,9 +3406,6 @@ packages:
   parent-module@1.0.1:
     resolution: {integrity: sha512-GQ2EWRpQV8/o+Aw8YqtfZZPfNRWZYkbidE9k5rpl/hC3vtHHBfGm2Ifi6qWV+coDGkrUKZAxE3Lot5kcsRlh+g==}
     engines: {node: '>=6'}
-
-  parse-headers@2.0.5:
-    resolution: {integrity: sha512-ft3iAoLOB/MlwbNXgzy43SWGP6sQki2jQvAyBg/zDFAgr9bfNWZIUj42Kw2eJIl8kEi4PbgE6U1Zau/HwI75HA==}
 
   parse-json@5.2.0:
     resolution: {integrity: sha512-ayCKvm/phCGxOkYRSCM82iDwct8/EonSEgCSxWxD7ve6jHggsFl4fZVQBPRNgQoKiuV/odhFrGzQXZwbifC8Rg==}
@@ -8129,8 +8120,6 @@ snapshots:
   parent-module@1.0.1:
     dependencies:
       callsites: 3.1.0
-
-  parse-headers@2.0.5: {}
 
   parse-json@5.2.0:
     dependencies:

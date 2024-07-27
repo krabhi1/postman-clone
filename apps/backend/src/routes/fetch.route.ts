@@ -1,6 +1,5 @@
 import { Router } from "express";
-import { findFalsyKeys, objToKeyValuesString } from "../others/utils.js";
-import parseHeaders from "parse-headers";
+import { buildHeadersString, findFalsyKeys, objToKeyValuesString, parseHeaders } from "../others/utils.js";
 
 const fetchRouter: Router = Router();
 
@@ -44,16 +43,10 @@ fetchRouter.post("/", async (req, res) => {
         })
         const blob = await response.blob();
         const contentType = response.headers.get('content-type')
-        const pmc_headers = objToKeyValuesString(
-            Array.from(response.headers.entries()).reduce((acc: any, [key, value]) => {
-                acc[key] = value
-                return acc
-            }, {} as any)
-        )
-        res.appendHeader('pmc_headers', pmc_headers)
+        res.appendHeader('pmc_headers', JSON.stringify(Array.from(response.headers.entries())))
 
         //others
-        const pmc_others = objToKeyValuesString({
+        const pmc_others = buildHeadersString({
             status: response.status + '',
             statusCode: response.statusText,
             size: blob.size + ''

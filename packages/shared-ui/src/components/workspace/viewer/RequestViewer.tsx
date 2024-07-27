@@ -87,23 +87,16 @@ export default function RequestViewer({
             isError={reqFetch.error !== undefined}
             isLoading={reqFetch.isLoading}
             contentType={reqFetch.data?.contentType}
-            data={reqFetch.data?.data}
             errorMessage={reqFetch.error}
-            size={reqFetch.data?.size || 0}
             onClear={reqFetch.clear}
-            headers={{
-              "content-type": "application/json",
-              "content-length": "100",
-              date: "Wed, 17 Nov 2021 07:00:00 GMT",
-              server: "express",
-              "x-powered-by": "nodejs",
-              connection: "close",
-              "access-control-allow-origin": "*",
-              "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
-              "access-control-allow-headers": "Content-Type, Authorization",
-              "access-control-allow-credentials": "true",
-              vary: "Origin, Accept-Encoding",
+            headers={reqFetch.data?.headers}
+            res={{
+              data: reqFetch.data?.data,
+              size: reqFetch.data?.size || 0,
             }}
+            status={reqFetch.data?.status}
+            statusCode={reqFetch.data?.statusCode}
+            
           />
         </Split>
       </div>

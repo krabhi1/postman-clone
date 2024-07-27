@@ -100,7 +100,7 @@ export function makeResultFrom<T>(args: {
 export type KeyValue<T> = Record<string | symbol | number, T>
 
 export type Falsy = "null" | "undefined" | "0" | "" | "false"
-export function findFalsyKeys(obj: KeyValue<any>, falsy: Falsy[] = ["null", "undefined",'']) {
+export function findFalsyKeys(obj: KeyValue<any>, falsy: Falsy[] = ["null", "undefined", '']) {
     return Object.keys(obj).filter(key => {
         const value = obj[key]
         let valueType: string = typeof value
@@ -167,4 +167,18 @@ export function isTextBasedContentType(contentType?: string) {
 
 export function objToKeyValuesString(obj: Record<string, string>) {
     return Object.keys(obj).map(key => `${key}=${obj[key]}`).join(',')
+}
+
+export function buildHeadersString(headers: Record<string, string>){
+    return JSON.stringify(Object.keys(headers).map(key => [key, headers[key]]))
+
+}
+
+export function parseHeaders(str: string) {
+    console.log("parse header",str)
+    const obj = JSON.parse(str||'[]') as [string, string][]
+    return obj.reduce((acc, [key, value]) => {
+        acc[key] = value
+        return acc
+    }, {} as Record<string, string>)
 }
