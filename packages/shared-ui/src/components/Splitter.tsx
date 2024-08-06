@@ -1,7 +1,7 @@
 import Split from "react-split";
 import { ReactChildren } from "../others/utils";
 import "../styles/splitter.css";
-import Sidebar, { SidebarExample } from "./sidebar/Sidebar";
+import Sidebar from "./sidebar/Sidebar";
 import { useState } from "react";
 import CollectionIcon from "../icons/CollectionIcon";
 import SidebarItem from "./sidebar/SidebarItem";
@@ -9,12 +9,14 @@ export type SplitterProps = ReactChildren & {
   noSplit?: boolean;
 };
 
+
+
 export default function Splitter(props: SplitterProps) {
   const [percent, setPercent] = useState<number[]>([50, 50]);
   if (props.noSplit) {
     return <>{props.children}</>;
   }
-  console.log(percent)
+  console.log(percent);
   return (
     <Split
       gutterSize={1}
@@ -45,3 +47,5 @@ export function SplitterExample() {
     </Splitter>
   );
 }
+
+

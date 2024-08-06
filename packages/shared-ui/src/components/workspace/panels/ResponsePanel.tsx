@@ -19,6 +19,7 @@ type ResponsePanelProps = {
   };
 };
 
+
 export function ResponsePanel(props: ResponsePanelProps) {
   const { contentType, isLoading, onClear, onCopy, res } = props;
   const { data } = res || {};

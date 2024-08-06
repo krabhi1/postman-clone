@@ -6,6 +6,7 @@ import SidebarItem, { SidebarItemProps } from "./SidebarItem";
 import React from "react";
 import "../../styles/sidebar.css";
 
+
 export type SidebarProps = ReactChildren & {
   activeIndex?: number;
   onItemChange?: (index?: number) => void;

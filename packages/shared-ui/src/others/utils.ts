@@ -39,7 +39,10 @@ export function reactChildren<T>(props: {
   ) as ReactElement<T>[];
 }
 
-export function fetchRequestItem(request: RequestItem) {
+export function fetchRequestItem(_request: RequestItem) {
+  const request: RequestItem = {
+    ..._request,
+  }
   const makeBody = () => {
     if (request.method === 'GET' || request.body.active == 'none') {
       return null;
@@ -52,12 +55,6 @@ export function fetchRequestItem(request: RequestItem) {
   //fetch and can be cancelled
   const controller = new AbortController();
   const signal = controller.signal;
-  // const response = fetch(request.url, {
-  //   method: request.method,
-  //   signal,
-  //   headers: request.headers,
-  //   body: makeBody()
-  // })
   const response = serverFetch(request.url, request.method, request.headers, makeBody(), signal);
 
   return { controller, response };
@@ -85,7 +82,7 @@ export function useRequestFetch() {
     response.then(async (res) => {
       const { headers } = res
       //if headers is any text 
-      const contentType = headers.get('content-type') || undefined;
+      const contentType = headers.get('Content-Type') || undefined;
       const isTextBased = isTextBasedContentType(contentType || '');
       const pmc_headers = parseHeaders(headers.get('pmc_headers') || '')
       const { size: sizeStr, status, statusCode } = parseHeaders(headers.get('pmc_others') || '') as KeyValue<string>
@@ -152,18 +149,36 @@ export function serverFetch(
   const pmc_headers = buildHeadersString(headers);
   const pmc_others = buildHeadersString({ method });
   const pmc_url = url;
+  const _headers = {
+    pmc_headers,
+    pmc_others,
+    pmc_url,
+  } as any
+  const contentType = headers['Content-Type']
+  if (contentType) {
+    _headers['Content-Type'] = contentType
+  }
+  console.log({ _headers, body,pmc_headers,pmc_others,pmc_url })
   return fetch(serverUrl, {
     method: "POST",
     signal,
-    headers: {
-      pmc_headers,
-      pmc_others,
-      pmc_url,
-    },
+    headers: _headers,
     body: body,
   });
 }
 
+
+export enum ContentType {
+  JSON = "application/json",
+  TEXT = "text/plain",
+  HTML = "text/html",
+  XML = "text/xml",
+  JAVASCRIPT = "application/javascript",
+  OCTET_STREAM = "application/octet-stream",
+  PNG = "image/png",
+  JPEG = "image/jpeg",
+  GIF = "image/gif",
+}
 
 
 

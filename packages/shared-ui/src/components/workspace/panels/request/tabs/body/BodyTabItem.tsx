@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { Body } from "common-utils/types";
+import { Body, RequestItem } from "common-utils/types";
 import Raw from "./items/Raw";
 import Dropdown from "@components/Dropdown";
 import RadioGroup, { RadioItem } from "@components/RadioGroup";
 import FormData from "./items/FormData";
 import { useRequestContext } from "@components/workspace/viewer/RequestViewer";
+import { WritableDraft } from "immer";
 
 const options = ["none", "form-data", "x-www-form-urlencoded", "raw", "binary"];
 const rawOptions = ["text", "json", "javascript", "html", "xml"];
@@ -12,12 +13,57 @@ type BodyTabItemProps = {
   body: Body;
   reqId: string;
 };
+function updateContentTypeHeader(item: WritableDraft<RequestItem>) {
+  let contentType = "";
+  const bodyType = item.body.active;
+  const buildRawContent = () => {
+    switch (item.body.raw.type) {
+      case "text":
+        contentType = "text/plain";
+        break;
+      case "json":
+        contentType = "application/json";
+        break;
+      case "javascript":
+        contentType = "application/javascript";
+        break;
+      case "html":
+        contentType = "text/html";
+        break;
+      case "xml":
+        contentType = "application/xml";
+        break;
+    }
+  };
+  switch (bodyType) {
+    case "binary":
+      contentType = "application/octet-stream";
+      break;
+    case "form-data":
+      contentType = "multipart/form-data";
+      break;
+    case "x-www-form-urlencoded":
+      contentType = "application/x-www-form-urlencoded";
+      break;
+    case "raw":
+      buildRawContent();
+      break;
+  }
+
+  if (contentType) {
+    item.headers["Content-Type"] = contentType;
+  }
+  console.log("contentType", item.headers);
+
+}
+
 export function BodyTabItem(props: BodyTabItemProps) {
   const { updateRequestItem } = useRequestContext();
   const activeOption = props.body.active;
   function updateOption(i: number) {
     updateRequestItem((item) => {
       item.body.active = options[i] as any;
+      updateContentTypeHeader(item);
     });
   }
 
@@ -25,6 +71,7 @@ export function BodyTabItem(props: BodyTabItemProps) {
     setRawOption(rawOption);
     updateRequestItem((item) => {
       item.body.raw.type = rawOption as any;
+      updateContentTypeHeader(item);
     });
   }
   const activeOptionIndex = options.indexOf(activeOption);

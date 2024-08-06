@@ -10,6 +10,8 @@ export function ParamsTabItem(
     request: { url }, onUrlChange,
   } = props;
 
+  console.log("headers",props.request.headers)
+
   const lastUrlRef = useRef("");
   const [data, setData] = useImmer<RowData[]>([]);
   const isUpperUpdate = useRef(false);

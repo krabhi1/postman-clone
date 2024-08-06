@@ -22,9 +22,11 @@ const fetchRouter: Router = Router();
  * 
  */
 fetchRouter.post("/", async (req, res) => {
+   
     const pmc_headers = req.headers['pmc_headers'] as string || ''
     const pmc_url = req.headers['pmc_url'] as string || ''
     const pmc_others = req.headers['pmc_others'] as string || ''
+    console.log('body', req.body)
 
     const falseKeys = findFalsyKeys({ pmc_url, pmc_others })
     if (falseKeys.length > 0) {
@@ -35,14 +37,21 @@ fetchRouter.post("/", async (req, res) => {
 
     const headers = parseHeaders(pmc_headers) as Record<string, string>
     const { method } = parseHeaders(pmc_others) as Record<string, string>
-
+    console.log({ pmc_headers, pmc_url, pmc_others, headers, method, body: req.body })
+    const makeBody = () => {
+        if (method === 'GET' || method === 'HEAD' || method === 'OPTIONS') {
+            return null
+        }
+        return req.body
+    }
     try {
         const response = await fetch(pmc_url, {
             method: method,
             headers: headers,
+            body: makeBody()
         })
         const blob = await response.blob();
-        const contentType = response.headers.get('content-type')
+        const contentType = response.headers.get('Content-Type')
         res.appendHeader('pmc_headers', JSON.stringify(Array.from(response.headers.entries())))
 
         //others
@@ -53,10 +62,11 @@ fetchRouter.post("/", async (req, res) => {
         })
         res.appendHeader('pmc_others', pmc_others)
         if (contentType) {
-            res.appendHeader('content-type', contentType)
+            res.appendHeader('Content-Type', contentType)
         }
         try {
             const text = await blob.text();
+            console.log({ text })
             res.send(text)
         } catch (error) {
             const array = await blob.arrayBuffer();
