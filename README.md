@@ -1,16 +1,8 @@
 # postman-clone
+this is a clone of postman app, made with electron, react, and express.
+it is a project for learning purpose.
 
-### How to (pnpm way) _only in dev mode_
-
-```bash
-pnpm --filter=<project-name> <script-command>
-pnpm --filter=backend dev
-
-
-```
-
-### How to (turbo way)
-
+### How to 
 ```bash
 #install depecencies
 pnpm install
@@ -21,24 +13,23 @@ pnpm i -g turbo
 #save environment variables in .zshrc or .bashrc
 alias turbo1="turbo --no-daemon"
 
-#you can also use pnpm to run app
-pnpm dev | build  --filter=project-name
 # run frontend
-turbo dev  --filter=frontend --no-daemon
+turbo1 dev  --filter=frontend 
 
 # run backend
-turbo dev2  --filter=backend --no-daemon
+turbo1 dev  --filter=backend 
 
-#for development of backend
-#ctrl + shift +b -> select watch tsconfig.json of backend
-turbo dev --filter=backend --no-daemon
+#shortcut
+turbo1 dev -F <project_name>
 
 
-#electron app
-#try this if won't work
-turbo dev --filter=electron --no-daemon
-#else
-pnpm dev --filter=electron
+#install dependencies using pnpm
+pnpm -F <project_name> <command>
+pnpm -F frontend i nanoid
+
+
+
+
 ```
 
 ### Command
